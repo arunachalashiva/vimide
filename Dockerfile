@@ -35,11 +35,6 @@ ENV GOPATH=/root/work/go
 ENV PATH=${PATH}:/usr/local/go/bin:${GOPATH}/bin
 RUN go get golang.org/x/tools/cmd/goimports
 
-# Install nodejs and npm
-RUN apt-get install -y nodejs
-RUN apt-get install -y npm \
- && npm -g install instant-markdown-d
-
 # Download vundle and install all vim plugins using vundle
 RUN git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 COPY .vimrc /root/
