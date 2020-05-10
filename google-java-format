@@ -1,0 +1,3 @@
+#!/bin/bash
+
+java -jar /usr/local/share/vim/google-java-format-1.6-all-deps.jar $@
