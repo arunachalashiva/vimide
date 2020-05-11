@@ -69,12 +69,14 @@ nnoremap <C-j> :YcmCompleter GoToReferences<CR>
 nnoremap <silent> <expr> <leader>t g:NERDTree.IsOpen() ? "\:NERDTreeClose<CR>" : bufexists(expand('%')) ? "\:NERDTreeFind<CR>" : "\:NERDTree<CR>"
 
 " fzf shortcuts for files and tags
-nnoremap ; :call FzfFiles()<CR>
-nnoremap ' :call FzfTags()<CR>
-nnoremap " :call FzfRg()<CR>
+nnoremap <Leader>ff :call FzfFiles()<CR>
+nnoremap <Leader>ft :call FzfTags()<CR>
+nnoremap <Leader>fg :call FzfRg()<CR>
 
 nnoremap <C-Right> :call BufferNext()<CR>
 nnoremap <C-Left> :call BufferPrevious()<CR>
+
+nnoremap <Leader>cd :CDir 
 
 nnoremap <Leader>af :ALEFix<CR>
 nnoremap <Leader>yf :YcmCompleter FixIt<CR>
@@ -127,8 +129,8 @@ let g:mvndisp_mvn_cmd = 'unset JAVA_TOOL_OPTIONS && mvn'
 " Color Schemes
 let g:solarized_termcolors = 256
 set background=dark
-" silent! colorscheme solarized
-" call togglebg#map("<F5>")
+silent! colorscheme solarized
+silent! call togglebg#map("<F5>")
 silent! colorscheme onedark
 
 " Open file from last location
@@ -185,4 +187,28 @@ fun! ChDir(dir)
     exe ':NERDTreeCWD'
   endif
 endfun
+
+fun! MyHelp()
+  echom("vimide shortcuts")
+  echom("'\\t'  - Open Close NERDTree")
+  echom("'\\ff' - Open fzf Files")
+  echom("'\\ft' - Open fzf Tags")
+  echom("'\\fg' - Open fzf Rg (grep)")
+  echom("'\\af' - Run ALEFix (fixer for lint errors)")
+  echom("'\\yf' - Run YouCompleteMe FixIt")
+  echom("'<Ctrl><Left>' - Switch to previous buffer")
+  echom("'<Ctrl><Right>' - Switch to next buffer")
+  echom("'\\cd' - Calls CDir <dir> directory and refresh NERDTree")
+  echom("'\\mas' - Run :MvnCompile all")
+  echom("'\\mat' - Run :MvnTest all")
+  echom("'\\mms' - Run :MvnCompile submodule")
+  echom("'\\mmt' - Run :MvnTest submodule")
+  echom("'\\mtt' - Run :MvnTest current-test")
+  echom("")
+  echom("vimide commands")
+  echom("':CDir <dir>' - Switch to <dir> directory and refresh NERDTree")
+endfun
+
+" Command to change to a directory (also refreshes NERDTree)
 command! -nargs=1 -complete=dir CDir :call ChDir(<q-args>)
+command! -nargs=0 HelpVimide :call MyHelp()

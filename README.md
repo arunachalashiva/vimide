@@ -28,3 +28,26 @@ also include other system tools used by these plugins (like clang, autopep8).
 * onedark - Default theme
 * Goyo - Distraction free
 * airline - Status/Tabline
+
+## Help for Shortcuts and Commands
+`:HelpVimide` outputs the custom defined shortcuts and commands.
+Below is the output of `:HelpVimide`
+```
+vimide shortcuts
+'\t'  - Open Close NERDTree
+'\ff' - Open fzf Files
+'\ft' - Open fzf Tags
+'\fg' - Open fzf Rg (grep)
+'\af' - Run ALEFix (fixer for lint errors)
+'\yf' - Run YouCompleteMe FixIt
+'<Ctrl><Left>' - Switch to previous buffer
+'<Ctrl><Right>' - Switch to next buffer
+'\cd' - Calls CDir <dir> directory and refresh NERDTree
+'\mas' - Run :MvnCompile all
+'\mat' - Run :MvnTest all
+'\mms' - Run :MvnCompile submodule
+'\mmt' - Run :MvnTest submodule
+'\mtt' - Run :MvnTest current-test
+vimide commands
+':CDir <dir>' - Switch to <dir> directory and refresh NERDTree
+```
