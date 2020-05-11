@@ -64,16 +64,17 @@ syntax on
 
 nnoremap <C-i> :YcmCompleter GoTo<CR>
 nnoremap <C-j> :YcmCompleter GoToReferences<CR>
-nnoremap <C-Right> :bnext<CR>
-nnoremap <C-Left> :bprevious<CR>
 
 " nerdtree short cut to toggle open/close
 nnoremap <silent> <expr> <leader>t g:NERDTree.IsOpen() ? "\:NERDTreeClose<CR>" : bufexists(expand('%')) ? "\:NERDTreeFind<CR>" : "\:NERDTree<CR>"
 
 " fzf shortcuts for files and tags
-nnoremap ; :Files<CR>
-nnoremap ' :Tags<CR>
-nnoremap " :Rg<CR>
+nnoremap ; :call FzfFiles()<CR>
+nnoremap ' :call FzfTags()<CR>
+nnoremap " :call FzfRg()<CR>
+
+nnoremap <C-Right> :call BufferNext()<CR>
+nnoremap <C-Left> :call BufferPrevious()<CR>
 
 nnoremap <Leader>af :ALEFix<CR>
 nnoremap <Leader>yf :YcmCompleter FixIt<CR>
@@ -146,3 +147,42 @@ set cursorline
 set number
 set incsearch
 " set spell
+
+" Disable fzf shortcuts in nerdtree buffer
+fun! FzfFiles()
+  if &filetype != "nerdtree"
+    exe ':Files'
+  endif
+endfun
+
+fun! FzfTags()
+  if &filetype != "nerdtree"
+    exe ':Tags'
+  endif
+endfun
+
+fun! FzfRg()
+  if &filetype != "nerdtree"
+    exe ':Rg'
+  endif
+endfun
+
+fun! BufferNext()
+  if &filetype != "nerdtree"
+    exe ':bnext'
+  endif
+endfun
+
+fun! BufferPrevious()
+  if &filetype != "nerdtree"
+    exe ':bprevious'
+  endif
+endfun
+
+fun! ChDir(dir)
+  exe ':cd' . a:dir
+  if &filetype != "nerdtree"
+    exe ':NERDTreeCWD'
+  endif
+endfun
+command! -nargs=1 -complete=dir CDir :call ChDir(<q-args>)
