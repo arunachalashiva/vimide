@@ -34,20 +34,23 @@ also include other system tools used by these plugins (like clang, autopep8).
 Below is the output of `:HelpVimide`
 ```
 vimide shortcuts
-'\t'  - Open Close NERDTree
-'\ff' - Open fzf Files
-'\ft' - Open fzf Tags
-'\fg' - Open fzf Rg (grep)
+'\h'  - Display this help
+'\nt' - nerdtree toggle - Open/Close NERDTree
+'\ff' - find files - Open fzf Files
+'\ft' - find tags - Open fzf Tags
+'\fg' - find grep pattern - Open fzf Rg (grep)
 '\af' - Run ALEFix (fixer for lint errors)
 '\yf' - Run YouCompleteMe FixIt
 '<Ctrl><Left>' - Switch to previous buffer
 '<Ctrl><Right>' - Switch to next buffer
 '\cd' - Calls CDir <dir> directory and refresh NERDTree
-'\mas' - Run :MvnCompile all
-'\mat' - Run :MvnTest all
+'\mas' - Run :MvnCompile all (entire project)
+'\mat' - Run :MvnTest all (entire project)
 '\mms' - Run :MvnCompile submodule
-'\mmt' - Run :MvnTest submodule
-'\mtt' - Run :MvnTest current-test
+'\mmt' - Run :MvnTest module (current submodule)
+'\mtt' - Run :MvnTest this (current test file)
+'\mca' - Run :MvnClean all (entire project)
+'\mcm' - Run :MvnClean module (current submodule)
 vimide commands
 ':CDir <dir>' - Switch to <dir> directory and refresh NERDTree
 ```

@@ -62,19 +62,20 @@ call vundle#end()
 filetype plugin indent on
 syntax on
 
+nnoremap <Leader>h :HelpVimide<CR>
 nnoremap <C-i> :YcmCompleter GoTo<CR>
 nnoremap <C-j> :YcmCompleter GoToReferences<CR>
 
 " nerdtree short cut to toggle open/close
-nnoremap <silent> <expr> <leader>t g:NERDTree.IsOpen() ? "\:NERDTreeClose<CR>" : bufexists(expand('%')) ? "\:NERDTreeFind<CR>" : "\:NERDTree<CR>"
+nnoremap <silent> <expr> <Leader>nt g:NERDTree.IsOpen() ? "\:NERDTreeClose<CR>" : bufexists(expand('%')) ? "\:NERDTreeFind<CR>" : "\:NERDTree<CR>"
 
 " fzf shortcuts for files and tags
-nnoremap <Leader>ff :call FzfFiles()<CR>
-nnoremap <Leader>ft :call FzfTags()<CR>
-nnoremap <Leader>fg :call FzfRg()<CR>
+nnoremap <silent> <Leader>ff :call FzfFiles()<CR>
+nnoremap <silent> <Leader>ft :call FzfTags()<CR>
+nnoremap <silent> <Leader>fg :call FzfRg()<CR>
 
-nnoremap <C-Right> :call BufferNext()<CR>
-nnoremap <C-Left> :call BufferPrevious()<CR>
+nnoremap <silent> <C-Right> :call BufferNext()<CR>
+nnoremap <silent> <C-Left> :call BufferPrevious()<CR>
 
 nnoremap <Leader>cd :CDir 
 
@@ -169,6 +170,7 @@ fun! FzfRg()
   endif
 endfun
 
+" Disable buf next and previous shortcut in nerdtree
 fun! BufferNext()
   if &filetype != "nerdtree"
     exe ':bnext'
@@ -181,6 +183,7 @@ fun! BufferPrevious()
   endif
 endfun
 
+" Change directory and refresh nerdtree
 fun! ChDir(dir)
   exe ':cd' . a:dir
   if &filetype != "nerdtree"
@@ -190,20 +193,23 @@ endfun
 
 fun! MyHelp()
   echom("vimide shortcuts")
-  echom("'\\t'  - Open Close NERDTree")
-  echom("'\\ff' - Open fzf Files")
-  echom("'\\ft' - Open fzf Tags")
-  echom("'\\fg' - Open fzf Rg (grep)")
+  echom("'\\h'  - Display this help")
+  echom("'\\nt' - nerdtree toggle - Open/Close NERDTree")
+  echom("'\\ff' - find files - Open fzf Files")
+  echom("'\\ft' - find tags - Open fzf Tags")
+  echom("'\\fg' - find grep pattern - Open fzf Rg (grep)")
   echom("'\\af' - Run ALEFix (fixer for lint errors)")
   echom("'\\yf' - Run YouCompleteMe FixIt")
   echom("'<Ctrl><Left>' - Switch to previous buffer")
   echom("'<Ctrl><Right>' - Switch to next buffer")
   echom("'\\cd' - Calls CDir <dir> directory and refresh NERDTree")
-  echom("'\\mas' - Run :MvnCompile all")
-  echom("'\\mat' - Run :MvnTest all")
+  echom("'\\mas' - Run :MvnCompile all (entire project)")
+  echom("'\\mat' - Run :MvnTest all (entire project)")
   echom("'\\mms' - Run :MvnCompile submodule")
-  echom("'\\mmt' - Run :MvnTest submodule")
-  echom("'\\mtt' - Run :MvnTest current-test")
+  echom("'\\mmt' - Run :MvnTest module (current submodule)")
+  echom("'\\mtt' - Run :MvnTest this (current test file)")
+  echom("'\\mca' - Run :MvnClean all (entire project)")
+  echom("'\\mcm' - Run :MvnClean module (current submodule)")
   echom("")
   echom("vimide commands")
   echom("':CDir <dir>' - Switch to <dir> directory and refresh NERDTree")
