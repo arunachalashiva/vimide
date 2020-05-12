@@ -76,6 +76,7 @@ nnoremap <silent> <C-Right> :call BufferNext()<CR>
 nnoremap <silent> <C-Left> :call BufferPrevious()<CR>
 
 nnoremap <Leader>cd :CDir 
+nnoremap <Leader>bd :bdelete<CR>
 
 nnoremap <Leader>af :ALEFix<CR>
 nnoremap <Leader>yf :YcmCompleter FixIt<CR>
@@ -187,7 +188,7 @@ endfun
 
 " Change directory and refresh nerdtree
 fun! ChDir(dir)
-  exe ':cd' . a:dir
+  exe ':cd ' . a:dir
   if &filetype != "nerdtree"
     exe ':NERDTreeCWD'
   endif
@@ -198,6 +199,7 @@ fun! MyHelp()
   echom("'\\h'  - Display this help")
   echom("'<ctrl-Left>'  - Switch to previous buffer")
   echom("'<ctrl-Right>' - Switch to next buffer")
+  echom("'\\bd' - buffer delete - Deletes current buffer")
   echom("'\\nt' - nerdtree toggle - Open/Close NERDTree")
   echom("'\\ff' - find files - Open fzf Files")
   echom("'\\ft' - find tags - Open fzf Tags")

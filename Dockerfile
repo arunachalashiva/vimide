@@ -38,7 +38,7 @@ RUN go get golang.org/x/tools/cmd/goimports
 # Download vundle and install all vim plugins using vundle
 RUN git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 COPY .vimrc /root/
-RUN vim +silent +VimEnter +PluginInstall +qall
+RUN vim +silent +PluginInstall +qall
 RUN cd /root/.vim/bundle/YouCompleteMe \
  && python3 ./install.py --java-completer --clangd-completer --go-completer \
  && cd -
