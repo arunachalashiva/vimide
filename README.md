@@ -35,14 +35,18 @@ Below is the output of `:HelpVimide`
 ```
 vimide shortcuts
 '\h'  - Display this help
+'<ctrl-Left>'  - Switch to previous buffer
+'<ctrl-Right>' - Switch to next buffer
 '\nt' - nerdtree toggle - Open/Close NERDTree
 '\ff' - find files - Open fzf Files
 '\ft' - find tags - Open fzf Tags
 '\fg' - find grep pattern - Open fzf Rg (grep)
 '\af' - Run ALEFix (fixer for lint errors)
 '\yf' - Run YouCompleteMe FixIt
-'<Ctrl><Left>' - Switch to previous buffer
-'<Ctrl><Right>' - Switch to next buffer
+'\yr' - List References - YouCompleteMe GoToReferences
+'\yd' - GotTo Documentation - YouCompleteMe GetDoc
+'\yt' - GetType - YouCompleteMe GetType
+'\yg' - Go to definition - YouCompleteMe GoTo - <ctrl-o> to go back
 '\cd' - Calls CDir <dir> directory and refresh NERDTree
 '\mas' - Run :MvnCompile all (entire project)
 '\mat' - Run :MvnTest all (entire project)

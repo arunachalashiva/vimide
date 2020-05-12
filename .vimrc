@@ -63,8 +63,6 @@ filetype plugin indent on
 syntax on
 
 nnoremap <Leader>h :HelpVimide<CR>
-nnoremap <C-i> :YcmCompleter GoTo<CR>
-nnoremap <C-j> :YcmCompleter GoToReferences<CR>
 
 " nerdtree short cut to toggle open/close
 nnoremap <silent> <expr> <Leader>nt g:NERDTree.IsOpen() ? "\:NERDTreeClose<CR>" : bufexists(expand('%')) ? "\:NERDTreeFind<CR>" : "\:NERDTree<CR>"
@@ -81,6 +79,10 @@ nnoremap <Leader>cd :CDir
 
 nnoremap <Leader>af :ALEFix<CR>
 nnoremap <Leader>yf :YcmCompleter FixIt<CR>
+nnoremap <Leader>yr :YcmCompleter GoToReferences<CR>
+nnoremap <Leader>yd :YcmCompleter GetDoc<CR>
+nnoremap <Leader>yt :YcmCompleter GetType<CR>
+nnoremap <Leader>yg :YcmCompleter GoTo<CR>
 
 " Airline settings
 let g:airline#extensions#tabline#enabled = 1
@@ -194,15 +196,19 @@ endfun
 fun! MyHelp()
   echom("vimide shortcuts")
   echom("'\\h'  - Display this help")
+  echom("'<ctrl-Left>'  - Switch to previous buffer")
+  echom("'<ctrl-Right>' - Switch to next buffer")
   echom("'\\nt' - nerdtree toggle - Open/Close NERDTree")
   echom("'\\ff' - find files - Open fzf Files")
   echom("'\\ft' - find tags - Open fzf Tags")
   echom("'\\fg' - find grep pattern - Open fzf Rg (grep)")
   echom("'\\af' - Run ALEFix (fixer for lint errors)")
   echom("'\\yf' - Run YouCompleteMe FixIt")
-  echom("'<Ctrl><Left>' - Switch to previous buffer")
-  echom("'<Ctrl><Right>' - Switch to next buffer")
-  echom("'\\cd' - Calls CDir <dir> directory and refresh NERDTree")
+  echom("'\\yr' - List References - YouCompleteMe GoToReferences")
+  echom("'\\yd' - GotTo Documentation - YouCompleteMe GetDoc")
+  echom("'\\yt' - GetType - YouCompleteMe GetType")
+  echom("'\\yg' - Go to definition - YouCompleteMe GoTo - <ctrl-o> to go back")
+  echom("'\\cd' - Change Dir - Calls CDir <dir> directory and refresh NERDTree")
   echom("'\\mas' - Run :MvnCompile all (entire project)")
   echom("'\\mat' - Run :MvnTest all (entire project)")
   echom("'\\mms' - Run :MvnCompile submodule")
