@@ -75,7 +75,7 @@ nnoremap <silent> <Leader>fg :call FzfRg()<CR>
 nnoremap <silent> <C-Right> :call BufferNext()<CR>
 nnoremap <silent> <C-Left> :call BufferPrevious()<CR>
 
-nnoremap <Leader>cd :CDir 
+nnoremap <Leader>op :OpenProject
 nnoremap <Leader>bd :bdelete<CR>
 
 nnoremap <Leader>af :ALEFix<CR>
@@ -187,11 +187,10 @@ fun! BufferPrevious()
 endfun
 
 " Change directory and refresh nerdtree
-fun! ChDir(dir)
+fun! OpenProject(dir)
   exe ':cd ' . a:dir
-  if &filetype != "nerdtree"
-    exe ':NERDTreeCWD'
-  endif
+  exe ':bufdo bwipeout'
+  exe ':NERDTreeCWD'
 endfun
 
 fun! MyHelp()
@@ -210,7 +209,7 @@ fun! MyHelp()
   echom("'\\yd' - GotTo Documentation - YouCompleteMe GetDoc")
   echom("'\\yt' - GetType - YouCompleteMe GetType")
   echom("'\\yg' - Go to definition - YouCompleteMe GoTo - <ctrl-o> to go back")
-  echom("'\\cd' - Change Dir - Calls CDir <dir> directory and refresh NERDTree")
+  echom("'\\op' - Open Project - Calls OpenProject <dir> directory and refresh NERDTree")
   echom("'\\mas' - Run :MvnCompile all (entire project)")
   echom("'\\mat' - Run :MvnTest all (entire project)")
   echom("'\\mms' - Run :MvnCompile submodule")
@@ -220,9 +219,9 @@ fun! MyHelp()
   echom("'\\mcm' - Run :MvnClean module (current submodule)")
   echom("")
   echom("vimide commands")
-  echom("':CDir <dir>' - Switch to <dir> directory and refresh NERDTree")
+  echom("':OpenProject <dir>' - Switch to <dir> directory and refresh NERDTree")
 endfun
 
 " Command to change to a directory (also refreshes NERDTree)
-command! -nargs=1 -complete=dir CDir :call ChDir(<q-args>)
+command! -nargs=1 -complete=dir OpenProject :call OpenProject(<q-args>)
 command! -nargs=0 HelpVimide :call MyHelp()
