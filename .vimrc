@@ -75,7 +75,7 @@ nnoremap <silent> <Leader>fg :call FzfRg()<CR>
 nnoremap <silent> <C-Right> :call BufferNext()<CR>
 nnoremap <silent> <C-Left> :call BufferPrevious()<CR>
 
-nnoremap <Leader>op :OpenProject
+nnoremap <Leader>op :OpenProject 
 nnoremap <Leader>bd :bdelete<CR>
 
 nnoremap <Leader>af :ALEFix<CR>
@@ -99,6 +99,7 @@ let g:fzf_layout = { 'window': 'enew' }
 
 let g:NERDSpaceDelims = 1
 let g:NERDTrimTrailingWhitespace = 1
+let g:NERDTreeMinimalUI=1
 
 " YCM settings
 let g:ycm_autoclose_preview_window_after_insertion = 1
