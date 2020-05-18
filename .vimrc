@@ -71,6 +71,7 @@ nnoremap <silent> <expr> <Leader>nt g:NERDTree.IsOpen() ? "\:NERDTreeClose<CR>" 
 nnoremap <silent> <Leader>ff :call FzfFiles()<CR>
 nnoremap <silent> <Leader>ft :call FzfTags()<CR>
 nnoremap <silent> <Leader>fg :call FzfRg()<CR>
+nnoremap <silent> <Leader>fw :FindWord<CR>
 
 nnoremap <silent> <C-Right> :call BufferNext()<CR>
 nnoremap <silent> <C-Left> :call BufferPrevious()<CR>
@@ -194,6 +195,12 @@ fun! OpenProject(dir)
   exe ':NERDTreeCWD'
 endfun
 
+" Run Rg search for current word under cursor
+fun! SearchWd()
+  let l:str = expand('<cword>') . '**'
+  exe ':Rg ' . l:str
+endfun
+
 fun! MyHelp()
   echom("vimide shortcuts")
   echom("'\\h'  - Display this help")
@@ -204,6 +211,7 @@ fun! MyHelp()
   echom("'\\ff' - find files - Open fzf Files")
   echom("'\\ft' - find tags - Open fzf Tags")
   echom("'\\fg' - find grep pattern - Open fzf Rg (grep)")
+  echom("'\\fw' - find grep pattern for current word under cursor using Rg")
   echom("'\\af' - Run ALEFix (fixer for lint errors)")
   echom("'\\yf' - Run YouCompleteMe FixIt")
   echom("'\\yr' - List References - YouCompleteMe GoToReferences")
@@ -226,3 +234,4 @@ endfun
 " Command to change to a directory (also refreshes NERDTree)
 command! -nargs=1 -complete=dir OpenProject :call OpenProject(<q-args>)
 command! -nargs=0 HelpVimide :call MyHelp()
+command! -nargs=0 FindWord :call SearchWd()

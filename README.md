@@ -37,17 +37,19 @@ vimide shortcuts
 '\h'  - Display this help
 '<ctrl-Left>'  - Switch to previous buffer
 '<ctrl-Right>' - Switch to next buffer
+'\bd' - buffer delete - Deletes current buffer
 '\nt' - nerdtree toggle - Open/Close NERDTree
 '\ff' - find files - Open fzf Files
 '\ft' - find tags - Open fzf Tags
 '\fg' - find grep pattern - Open fzf Rg (grep)
+'\fw' - find grep pattern for current word under cursor using Rg
 '\af' - Run ALEFix (fixer for lint errors)
 '\yf' - Run YouCompleteMe FixIt
 '\yr' - List References - YouCompleteMe GoToReferences
 '\yd' - GotTo Documentation - YouCompleteMe GetDoc
 '\yt' - GetType - YouCompleteMe GetType
 '\yg' - Go to definition - YouCompleteMe GoTo - <ctrl-o> to go back
-'\cd' - Calls CDir <dir> directory and refresh NERDTree
+'\op' - Open Project - Calls OpenProject <dir> directory and refresh NERDTree
 '\mas' - Run :MvnCompile all (entire project)
 '\mat' - Run :MvnTest all (entire project)
 '\mms' - Run :MvnCompile submodule
@@ -56,5 +58,5 @@ vimide shortcuts
 '\mca' - Run :MvnClean all (entire project)
 '\mcm' - Run :MvnClean module (current submodule)
 vimide commands
-':CDir <dir>' - Switch to <dir> directory and refresh NERDTree
+':OpenProject <dir>' - Switch to <dir> directory and refresh NERDTree
 ```
