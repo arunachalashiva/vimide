@@ -235,3 +235,6 @@ endfun
 command! -nargs=1 -complete=dir OpenProject :call OpenProject(<q-args>)
 command! -nargs=0 HelpVimide :call MyHelp()
 command! -nargs=0 FindWord :call SearchWd()
+
+set mouse=a
+set ttymouse=sgr

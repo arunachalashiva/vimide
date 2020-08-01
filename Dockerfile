@@ -52,7 +52,7 @@ RUN git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf \
  && wget -O rg.deb https://github.com/BurntSushi/ripgrep/releases/download/11.0.2/ripgrep_11.0.2_amd64.deb \
  && dpkg -i rg.deb \
  && rm rg.deb
-ENV PATH=$PATH:/root/.fzf/bin
+ENV PATH=${PATH}:/root/.fzf/bin
 
 RUN apt-get install -y locales \
  && locale-gen en_US.UTF-8
