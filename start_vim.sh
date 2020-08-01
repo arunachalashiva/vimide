@@ -9,5 +9,5 @@ docker run --rm --name vimide  --network host -h vimide -it \
 	-v ${HOME}/go:/root/go \
 	-v ${HOME}/.m2:/root/.m2 \
 	-v ${HOME}:/root/work \
-	-v /home/srikant/work/arunachalashiva/vimide/.vimrc:/root/.vimrc \
+	-v /home/srikant/work/arunachalashiva/vimide/vimrc:/root/.vimrc \
 	vim-dev:1.0
