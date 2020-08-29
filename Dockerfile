@@ -2,7 +2,14 @@ FROM ubuntu:bionic
 
 MAINTAINER ArunachalaShiva
 
-WORKDIR /root/work
+ENV UID=${UID:-1001}
+ENV GID=${GID:-1001}
+ENV USER=${USER:-user}
+
+RUN groupadd -g ${GID} ${USER} \
+	&& useradd -u ${UID} -g ${GID} -m ${USER}
+
+WORKDIR /user/work
 
 RUN mkdir /usr/local/share/vim
 
@@ -31,33 +38,43 @@ RUN wget https://repo1.maven.org/maven2/org/projectlombok/lombok/1.18.8/lombok-1
 # Install go
 RUN curl -sL --retry 5 "https://dl.google.com/go/go1.14.2.linux-amd64.tar.gz" \
     | gunzip | tar -x -C /usr/local/
-ENV GOPATH=/root/work/go
+ENV GOPATH=/user/work/go
 ENV PATH=${PATH}:/usr/local/go/bin:${GOPATH}/bin
 RUN go get golang.org/x/tools/cmd/goimports
 
-# Download vundle and install all vim plugins using vundle
-RUN git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-COPY vimrc /root/.vimrc
-RUN vim +silent +PluginInstall +qall
-RUN cd /root/.vim/bundle/YouCompleteMe \
- && python3 ./install.py --java-completer --clangd-completer --go-completer \
- && cd -
-COPY ftplugin /root/.vim/ftplugin/
-COPY ycm_extra_conf.py /root/.vim/.ycm_extra_conf.py
 COPY google-java-format /usr/local/bin/
-
-# Install FZF and RipGrep
-RUN git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf \
- && ~/.fzf/install \
- && wget -O rg.deb https://github.com/BurntSushi/ripgrep/releases/download/11.0.2/ripgrep_11.0.2_amd64.deb \
- && dpkg -i rg.deb \
- && rm rg.deb
-ENV PATH=${PATH}:/root/.fzf/bin
 
 RUN apt-get install -y locales \
  && locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
+
+# Install RipGrep
+RUN wget -O rg.deb https://github.com/BurntSushi/ripgrep/releases/download/11.0.2/ripgrep_11.0.2_amd64.deb \
+ && dpkg -i rg.deb \
+ && rm rg.deb
+
+USER ${USER}
+ENV HOME /home/${USER}
+
+# Download vundle and install all vim plugins using vundle
+RUN git clone https://github.com/VundleVim/Vundle.vim.git ${HOME}/.vim/bundle/Vundle.vim
+COPY vimrc ${HOME}/.vimrc
+RUN vim +silent +PluginInstall +qall
+RUN cd ${HOME}/.vim/bundle/YouCompleteMe \
+ && python3 ./install.py --java-completer --clangd-completer --go-completer \
+ && cd -
+COPY ftplugin ${HOME}/.vim/ftplugin/
+COPY ycm_extra_conf.py ${HOME}/.vim/.ycm_extra_conf.py
+
+# Install FZF
+RUN git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf \
+ && ~/.fzf/install
+ENV PATH=${PATH}:${HOME}/.fzf/bin
+
+# Install misc
+RUN pip3 install grip compiledb
+ENV PATH=${PATH}:${HOME}/.local/bin
 
 CMD ["/usr/bin/vim"]

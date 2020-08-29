@@ -77,7 +77,9 @@ nnoremap <silent> <C-Right> :call BufferNext()<CR>
 nnoremap <silent> <C-Left> :call BufferPrevious()<CR>
 
 nnoremap <Leader>op :OpenProject 
+nnoremap <Leader>ot :OpenTerminal<CR>
 nnoremap <Leader>bd :bdelete<CR>
+nnoremap <Leader>om :Dispatch grip -b %<CR>
 
 nnoremap <Leader>af :ALEFix<CR>
 nnoremap <Leader>yf :YcmCompleter FixIt<CR>
@@ -106,6 +108,7 @@ let g:NERDTreeMinimalUI=1
 let g:ycm_autoclose_preview_window_after_insertion = 1
 let g:ycm_autoclose_preview_window_after_completion = 1
 let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
+let g:ycm_filetype_blacklist = { 'nerdtree': 1 }
 let g:ycm_semantic_triggers =  {
   \   'c' : ['->', '.','re![_a-zA-z0-9]'],
   \   'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
@@ -122,15 +125,10 @@ let g:ycm_semantic_triggers =  {
 " lombok work around for youcompleteme
 let $JAVA_TOOL_OPTIONS = '-javaagent:/usr/local/share/vim/lombok-1.18.8.jar -Xbootclasspath/p:/usr/local/share/vim/lombok-1.18.8-sources.jar'
 
-" Instant markdown settings
-let g:instant_markdown_logfile = '/tmp/instant_markdown.log'
-let g:instant_markdown_slow = 1
-let g:instant_markdown_browser = "firefox --new-window"
-
 " Settings for my plugin mvndiskp
 " Need to unset the above set JAVA_TOOL_OPTIONS (lombok work around) for mvn
 " to work.
-let g:mvndisp_mvn_cmd = 'unset JAVA_TOOL_OPTIONS && mvn'
+let g:mvndisp_mvn_cmd = 'unset JAVA_TOOL_OPTIONS && mvn -Dakriedge'
 
 " Color Schemes
 let g:solarized_termcolors = 256
@@ -195,6 +193,11 @@ fun! OpenProject(dir)
   exe ':NERDTreeCWD'
 endfun
 
+" Open bash terminal
+fun! OpenTerm()
+  exe ':terminal ++rows=10 bash'
+endfun
+
 " Run Rg search for current word under cursor
 fun! SearchWd()
   let l:str = expand('<cword>') . '**'
@@ -219,6 +222,8 @@ fun! MyHelp()
   echom("'\\yt' - GetType - YouCompleteMe GetType")
   echom("'\\yg' - Go to definition - YouCompleteMe GoTo - <ctrl-o> to go back")
   echom("'\\op' - Open Project - Calls OpenProject <dir> directory and refresh NERDTree")
+  echom("'\\ot' - Open Terminal - Opens a bash terminal")
+  echom("'\\om' - Open Markdown preview in chrome")
   echom("'\\mas' - Run :MvnCompile all (entire project)")
   echom("'\\mat' - Run :MvnTest all (entire project)")
   echom("'\\mms' - Run :MvnCompile submodule")
@@ -235,6 +240,7 @@ endfun
 command! -nargs=1 -complete=dir OpenProject :call OpenProject(<q-args>)
 command! -nargs=0 HelpVimide :call MyHelp()
 command! -nargs=0 FindWord :call SearchWd()
+command! -nargs=0 OpenTerminal :call OpenTerm()
 
-set mouse=a
-set ttymouse=sgr
+"set mouse=a
+"set ttymouse=sgr

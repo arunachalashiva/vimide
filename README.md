@@ -50,6 +50,7 @@ vimide shortcuts
 '\yt' - GetType - YouCompleteMe GetType
 '\yg' - Go to definition - YouCompleteMe GoTo - <ctrl-o> to go back
 '\op' - Open Project - Calls OpenProject <dir> directory and refresh NERDTree
+'\om' - Open Markdown Viewer - Opens Markdown viewer in chrome (port 6419) using grip 
 '\mas' - Run :MvnCompile all (entire project)
 '\mat' - Run :MvnTest all (entire project)
 '\mms' - Run :MvnCompile submodule
