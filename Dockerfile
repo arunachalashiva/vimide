@@ -1,4 +1,4 @@
-FROM ubuntu:bionic
+FROM ubuntu:focal
 
 MAINTAINER ArunachalaShiva
 
@@ -18,18 +18,20 @@ RUN apt-get update \
  && apt-get install -y vim curl unzip git wget
 
 # Install python
-RUN apt-get install -y python3.6 python3-setuptools python3-pip python3-dev virtualenv \
- && ln -s /usr/bin/python3.6 /usr/bin/python \
+RUN apt-get install -y python3 python3-setuptools python3-pip python3-dev virtualenv \
+ && ln -s /usr/bin/python3.8 /usr/bin/python \
  && ln -s /usr/bin/pip3 /usr/bin/pip
 RUN pip install jedi flake8 autopep8 yapf
+
+RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
 
 # Install C and C++
 RUN apt-get install -y gcc g++ build-essential clang clang-tidy clang-format cmake
 
 # Install java and mvn
-RUN apt-get install -y openjdk-8-jdk
+RUN apt-get install -y openjdk-11-jdk
 RUN apt-get install -y maven
-ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 ENV PATH=${PATH}:/usr/local/bin:${JAVA_HOME}/bin
 RUN wget https://github.com/google/google-java-format/releases/download/google-java-format-1.6/google-java-format-1.6-all-deps.jar -P /usr/local/share/vim/
 RUN wget https://repo1.maven.org/maven2/org/projectlombok/lombok/1.18.8/lombok-1.18.8-sources.jar -P /usr/local/share/vim
@@ -58,11 +60,14 @@ RUN wget -O rg.deb https://github.com/BurntSushi/ripgrep/releases/download/11.0.
 USER ${USER}
 ENV HOME /home/${USER}
 
-# Download vundle and install all vim plugins using vundle
-RUN git clone https://github.com/VundleVim/Vundle.vim.git ${HOME}/.vim/bundle/Vundle.vim
 COPY vimrc ${HOME}/.vimrc
-RUN vim +silent +PluginInstall +qall
-RUN cd ${HOME}/.vim/bundle/YouCompleteMe \
+
+# Download vundle plug and install all vim plugins using vimplug
+RUN curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+RUN vim +silent +PlugInstall +qall
+RUN cd ${HOME}/.vim/plugged/YouCompleteMe \
  && python3 ./install.py --java-completer --clangd-completer --go-completer \
  && cd -
 COPY ftplugin ${HOME}/.vim/ftplugin/
@@ -74,7 +79,7 @@ RUN git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf \
 ENV PATH=${PATH}:${HOME}/.fzf/bin
 
 # Install misc
-RUN pip3 install grip compiledb
+RUN pip3 install grip compiledb ranger-fm
 ENV PATH=${PATH}:${HOME}/.local/bin
 
 CMD ["/usr/bin/vim"]
