@@ -40,7 +40,7 @@ Plug 'altercation/vim-colors-solarized'
 Plug 'joshdick/onedark.vim'
 
 " Auto ctags update on file change
-" Plug 'soramugi/auto-ctags.vim'
+Plug 'soramugi/auto-ctags.vim'
 
 Plug 'francoiscabrol/ranger.vim'
 Plug 'rbgrouleff/bclose.vim'
@@ -95,6 +95,13 @@ let g:NERDSpaceDelims = 1
 let g:NERDTrimTrailingWhitespace = 1
 let g:NERDTreeMinimalUI=1
 
+" auto-ctags settings
+let g:auto_ctags = 1
+let g:auto_ctags_tags_args = ['--tag-relative=yes', '--recurse=yes', '--sort=yes']
+let g:auto_ctags_filetype_mode = 1
+let g:auto_ctags_set_tags_option = 1
+let g:auto_ctags_warn_once = 1
+
 " YCM settings
 let g:ycm_log_level = 'debug'
 let g:ycm_keep_logfiles = 1
@@ -123,7 +130,7 @@ let $JAVA_TOOL_OPTIONS = '-javaagent:/usr/local/share/vim/lombok-1.18.8.jar'
 " Settings for my plugin mvndiskp
 " Need to unset the above set JAVA_TOOL_OPTIONS (lombok work around) for mvn
 " to work.
-let g:mvndisp_mvn_cmd = 'unset JAVA_TOOL_OPTIONS && mvn '
+let g:mvndisp_mvn_cmd = 'unset JAVA_TOOL_OPTIONS && mvn -Dakriedge'
 
 " Color Schemes
 let g:solarized_termcolors = 256
@@ -240,5 +247,11 @@ command! -nargs=0 HelpVimide :call MyHelp()
 command! -nargs=0 FindWord :call SearchWd()
 command! -nargs=0 OpenTerminal :call OpenTerm()
 
+" Ignore filename if Rg search
+command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}), <bang>0)
+
 "set mouse=a
 "set ttymouse=sgr
+
+" Current date
+nnoremap <F6> "=strftime("%c")<CR>P
