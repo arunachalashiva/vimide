@@ -7,6 +7,7 @@ import subprocess
 DIR_OF_THIS_SCRIPT = p.abspath(p.dirname(__file__))
 DIR_OF_THIRD_PARTY = p.join(DIR_OF_THIS_SCRIPT, 'third_party')
 SOURCE_EXTENSIONS = ['.cpp', '.cxx', '.cc', '.c', '.m', '.mm']
+PATH_TO_LOMBOK = "/usr/local/share/vim/lombok-1.18.8-sources.jar"
 
 database = None
 
@@ -154,6 +155,19 @@ def Settings(**kwargs):
     if language == 'python':
         return {
             'interpreter_path': PathToPythonUsedDuringBuild()
+        }
+
+    if language == 'java':
+        if not os.path.exists( PATH_TO_LOMBOK ):
+            raise RuntimeError( "Didn't find lombok jar!" )
+        return {
+            'ls': {
+                'java.format.onType.enabled': True
+            }
+            #'jvm': {
+            #    'args': [ '-javaagent:' + PATH_TO_LOMBOK,
+            #    '-Xbootclasspath/a:' + PATH_TO_LOMBOK ]
+            #}
         }
 
     return {}

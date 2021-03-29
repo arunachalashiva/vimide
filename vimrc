@@ -40,7 +40,7 @@ Plug 'altercation/vim-colors-solarized'
 Plug 'joshdick/onedark.vim'
 
 " Auto ctags update on file change
-Plug 'soramugi/auto-ctags.vim'
+" Plug 'soramugi/auto-ctags.vim'
 
 Plug 'francoiscabrol/ranger.vim'
 Plug 'rbgrouleff/bclose.vim'

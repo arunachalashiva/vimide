@@ -1,5 +1,5 @@
-setlocal tabstop=4
-setlocal shiftwidth=4
+setlocal tabstop=2
+setlocal shiftwidth=2
 " setlocal expandtab
 
 " apt-get install install clang, clangd, clang-tidy, clang-format
@@ -8,7 +8,7 @@ setlocal shiftwidth=4
 let b:ale_use_global_executables = 1
 let b:ale_linters = {'cpp': ['clangtidy']}
 let b:ale_fixers = {'cpp': ['clang-format', 'clangtidy', 'trim_whitespace', 'remove_trailing_lines']}
-let b:ale_cpp_clangtidy_options = '-Wall -Wextra -Werror -std=c++11 -x c++ -I . -I src/ -I include/ -I /usr/include/c++/7 -I /usr/local/include/'
+let b:ale_cpp_clangtidy_options = '-Wall -Wextra -Werror -std=c++11 -x c++ -I . -I src/ -I include/ -I /usr/include/c++/9 -I /usr/local/include/'
 let b:ale_cpp_clangtidy_checks = ['clang-analyzer-*', 'llvm-*', 'cppcoreguidelines-*', 'google-*']
 let b:ale_cpp_clangtidy_fix_errors = 1
 let b:ale_cpp_clangformat_options = '-sort-includes -style="{BasedOnStyle: google}"'
