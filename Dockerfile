@@ -2,8 +2,8 @@ FROM ubuntu:focal
 
 MAINTAINER ArunachalaShiva
 
-ENV UID=${UID:-1001}
-ENV GID=${GID:-1001}
+ENV UID=${UID:-1000}
+ENV GID=${GID:-1000}
 ENV USER=${USER:-user}
 
 RUN groupadd -g ${GID} ${USER} \
@@ -38,7 +38,7 @@ RUN wget https://repo1.maven.org/maven2/org/projectlombok/lombok/1.18.8/lombok-1
 RUN wget https://repo1.maven.org/maven2/org/projectlombok/lombok/1.18.8/lombok-1.18.8.jar -P /usr/local/share/vim
 
 # Install go
-RUN curl -sL --retry 5 "https://dl.google.com/go/go1.14.2.linux-amd64.tar.gz" \
+RUN curl -sL --retry 5 "https://golang.org/dl/go1.16.3.linux-amd64.tar.gz" \
     | gunzip | tar -x -C /usr/local/
 ENV GOPATH=/user/work/go
 ENV PATH=${PATH}:/usr/local/go/bin:${GOPATH}/bin

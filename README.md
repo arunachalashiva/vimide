@@ -2,18 +2,18 @@
 vim configuration that I use, packaged in a docker and has the below programming languages installed. Docker image
 also include other system tools used by these plugins (like clang, autopep8).
 ## Languages
-* java - version 1.8
+* java - version 1.11
 	* 'YouCompleteMe' for completion (jdt.ls also include support for lombok)
 	* 'ALE' for linting (javac) and fixing (using google-java-format)
-* python 3.6
+* python 3.8
 	* 'YouCompleteMe' for completion (jedi)
 	* 'ALE' for linting (autopep8) and fixing (using yapf)
 * c++
 	* 'YouCompleteMe' for completion
 	* 'ALE' for linting (clangtidy) and fixing (using clangtidy, clang-format)
-* go 1.14
+* go 1.16
 	* 'YouCompleteMe' for completion (gopls)
-	* 'ALE' for linting (autopep8) and fixing (using yapf)
+	* 'ALE' for linting (gofmt) and fixing (using gopls)
 
 ## Tools
 * fzf - To search for files, git commits, tags, Rg grep

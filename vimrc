@@ -130,7 +130,7 @@ let $JAVA_TOOL_OPTIONS = '-javaagent:/usr/local/share/vim/lombok-1.18.8.jar'
 " Settings for my plugin mvndiskp
 " Need to unset the above set JAVA_TOOL_OPTIONS (lombok work around) for mvn
 " to work.
-let g:mvndisp_mvn_cmd = 'unset JAVA_TOOL_OPTIONS && mvn -Dakriedge'
+let g:mvndisp_mvn_cmd = 'unset JAVA_TOOL_OPTIONS && mvn '
 
 " Color Schemes
 let g:solarized_termcolors = 256
