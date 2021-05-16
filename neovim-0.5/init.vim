@@ -48,6 +48,8 @@ call plug#end()
 
 filetype plugin on
 
+let g:NVIM_DATA = $HOME . '/data/'
+
 " Use <Tab> and <S-Tab> to navigate through popup menu
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
@@ -84,7 +86,7 @@ require('formatter').setup({
       function()
         return {
           exe = 'java',
-          args = {'-jar', '/usr/local/share/vim/google-java-format-1.6-all-deps.jar', vim.api.nvim_buf_get_name(0)},
+          args = {'-jar', vim.api.nvim_eval("g:NVIM_DATA")..'/google-java-format-1.6-all-deps.jar', vim.api.nvim_buf_get_name(0)},
           stdin = true
         }
       end
@@ -130,7 +132,7 @@ let g:NERDSpaceDelims = 1
 let g:NERDTrimTrailingWhitespace = 1
 let g:NERDTreeMinimalUI = 1
 
-let $JAVA_TOOL_OPTIONS = '-javaagent:/usr/local/share/vim/lombok-1.18.8.jar'
+let $JAVA_TOOL_OPTIONS = '-javaagent:' . g:NVIM_DATA . '/lombok-1.18.8.jar'
 let g:mvndisp_mvn_cmd = 'unset JAVA_TOOL_OPTIONS && mvn '
 
 " nerdtree short cut to toggle open/close
