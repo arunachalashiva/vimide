@@ -1,10 +1,13 @@
 call plug#begin("~/.vim/plugged")
 
-" nvim lsp 
+" nvim lsp
 Plug 'neovim/nvim-lspconfig'
 
 " auto completion for lsp
 Plug 'nvim-lua/completion-nvim'
+
+" Fomatter
+Plug 'mhartington/formatter.nvim'
 
 " Nerd tree
 Plug 'scrooloose/nerdtree'
@@ -27,7 +30,10 @@ Plug 'tpope/vim-dispatch'
 
 " fzf
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-" Plug 'junegunn/fzf.vim'
+Plug 'junegunn/fzf.vim'
+
+" fzf for lsp
+Plug 'ojroques/nvim-lspfuzzy', {'branch': 'main'}
 
 " Solarized color scheme
 Plug 'altercation/vim-colors-solarized'
@@ -35,7 +41,7 @@ Plug 'altercation/vim-colors-solarized'
 " Onedark color scheme
 Plug 'joshdick/onedark.vim'
 
-" My own plugin
+" My own plugin for maven commands
 Plug 'arunachalashiva/mvndisp'
 
 call plug#end()
@@ -52,6 +58,9 @@ set completeopt=menuone,noinsert,noselect
 " Avoid showing message extra message when using completion
 set shortmess+=c
 
+" Setup fzf for lsp results
+lua require('lspfuzzy').setup {}
+
 " Registered language servers
 lua require'lspconfig'.pyls.setup{on_attach=require'completion'.on_attach}
 lua require'lspconfig'.gopls.setup{on_attach=require'completion'.on_attach}
@@ -63,32 +72,59 @@ lua require'lspconfig'.yamlls.setup{on_attach=require'completion'.on_attach}
 " Auto format setting
 autocmd BufWritePre *.py lua vim.lsp.buf.formatting_sync(nil, 100)
 autocmd BufWritePre *.go lua vim.lsp.buf.formatting_sync(nil, 100)
-autocmd BufWritePre *.java lua vim.lsp.buf.formatting_sync(nil, 100)
 autocmd BufWritePre *.sh lua vim.lsp.buf.formatting_sync(nil, 100)
 autocmd BufWritePre *.{yml,yaml} lua vim.lsp.buf.formatting_sync(nil, 100)
 autocmd BufWritePre *.{c,cpp} lua vim.lsp.buf.formatting_sync(nil, 100)
+" autocmd BufWritePre *.java lua vim.lsp.buf.formatting_sync(nil, 100)
 
-" LSP config 
+lua << EOF
+require('formatter').setup({
+  filetype = {
+    java = {
+      function()
+        return {
+          exe = 'java',
+          args = {'-jar', '/usr/local/share/vim/google-java-format-1.6-all-deps.jar', vim.api.nvim_buf_get_name(0)},
+          stdin = true
+        }
+      end
+    }
+  }
+})
+
+vim.api.nvim_exec([[
+augroup FormatAutogroup
+  autocmd!
+  autocmd BufWritePost *.java FormatWrite
+augroup END
+]], true)
+EOF
+
+" LSP config
 nnoremap <silent> <Leader>gd <cmd>lua vim.lsp.buf.definition()<CR>
 nnoremap <silent> <Leader>gD <cmd>lua vim.lsp.buf.declaration()<CR>
 nnoremap <silent> <Leader>gr <cmd>lua vim.lsp.buf.references()<CR>
 nnoremap <silent> <Leader>gi <cmd>lua vim.lsp.buf.implementation()<CR>
+nnoremap <silent> <Leader>rn <cmd>lua vim.lsp.buf.rename()<CR>
 nnoremap <silent> <Leader>ho <cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <silent> <Leader>sh <cmd>lua vim.lsp.buf.signature_help()<CR>
 nnoremap <silent> <Leader>dp <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
 nnoremap <silent> <Leader>dn <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
+nnoremap <silent> <Leader>ca <cmd>lua vim.lsp.buf.code_action()<CR>
 
 " Airline settings
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
-" let g:airline#extensions#ale#enabled = 1
 let g:airline#extensions#nvimlsp#enabled = 1
 let g:airline#extensions#nvimlsp#error_symbol = 'E:'
 let g:airline#extensions#nvimlsp#warning_symbol = 'W:'
 
 " fzf settings
 let g:fzf_tags_command = 'ctags -R'
-let g:fzf_layout = { 'window': 'enew' }
+" let g:fzf_layout = { 'window': 'enew' }
+ command! -bang -nargs=* Rg
+   \ call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>),
+   \ 1, fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}, 'right:50%'), <bang>0)
 
 let g:NERDSpaceDelims = 1
 let g:NERDTrimTrailingWhitespace = 1
@@ -98,7 +134,9 @@ let $JAVA_TOOL_OPTIONS = '-javaagent:/usr/local/share/vim/lombok-1.18.8.jar'
 let g:mvndisp_mvn_cmd = 'unset JAVA_TOOL_OPTIONS && mvn '
 
 " nerdtree short cut to toggle open/close
-nnoremap <silent> <expr> <Leader>nt g:NERDTree.IsOpen() ? "\:NERDTreeClose<CR>" : bufexists(expand('%')) ? "\:NERDTreeFind<CR>" : "\:NERDTree<CR>"
+nnoremap <silent> <expr> <Leader>nt g:NERDTree.IsOpen() ?
+                        \ "\:NERDTreeClose<CR>" : bufexists(expand('%')) ?
+                        \ "\:NERDTreeFind<CR>" : "\:NERDTree<CR>"
 
 " fzf shortcuts for files and tags
 nnoremap <silent> <Leader>ff :call FzfFiles()<CR>
@@ -109,7 +147,7 @@ nnoremap <silent> <Leader>fw :FindWord<CR>
 nnoremap <silent> <C-Right> :call BufferNext()<CR>
 nnoremap <silent> <C-Left> :call BufferPrevious()<CR>
 
-nnoremap <Leader>op :OpenProject 
+nnoremap <Leader>op :OpenProject
 nnoremap <Leader>ot :OpenTerminal<CR>
 nnoremap <Leader>bd :bdelete<CR>
 nnoremap <Leader>om :Dispatch grip -b %<CR>
@@ -126,6 +164,7 @@ autocmd! BufNewFile,BufReadPost *.{yaml,yml} set filetype=yaml
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 
 autocmd FileType java setlocal ts=2 sts=2 sw=2 expandtab
+autocmd FileType cpp setlocal ts=2 sts=2 sw=2 expandtab
 
 set encoding=utf-8
 set switchbuf=usetab
