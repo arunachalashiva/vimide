@@ -15,7 +15,7 @@ sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.
 ### Python
 ```
 pip3 install autopep8 yapf
-pip3 install 'python-language-server[yapf, autopep8]'
+pip3 install 'python-lsp-server[all]'
 ```
 
 ### Clang
