@@ -11,7 +11,7 @@ java \
      -Dlog.level=ALL \
      -Xms1G \
      -Xmx2G \
-     -jar ${JDTLS_ROOT}/plugins/org.eclipse.equinox.launcher_1.6.100.v20201223-0822.jar \
+     -jar ${JDTLS_ROOT}/plugins/org.eclipse.equinox.launcher_*.jar \
      -configuration ${JDTLS_ROOT}/config_linux \
      -data ${1:-WORKSPACE} \
      --add-modules=ALL-SYSTEM \
