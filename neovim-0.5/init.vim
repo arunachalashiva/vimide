@@ -101,13 +101,13 @@ augroup END
 EOF
 
 " LSP config
-nnoremap <silent> <Leader>gd <cmd>lua require('telescope_builtin').lsp_definitions()<CR>
-nnoremap <silent> <Leader>gD <cmd>lua require('telescope_builtin').lsp_type_definitions()<CR>
-nnoremap <silent> <Leader>gr <cmd>lua require('telescope_builtin').lsp_references()<CR>
-nnoremap <silent> <Leader>gi <cmd>lua require('telescope_builtin').lsp_implementations()<CR>
-nnoremap <silent> <Leader>ca <cmd>lua require('telescope_builtin').lsp_code_actions()<CR>
-nnoremap <silent> <Leader>dd <cmd>lua require('telescope_builtin').lsp_document_diagnostics()<CR>
-nnoremap <silent> <Leader>dw <cmd>lua require('telescope_builtin').lsp_workspace_diagnostics()<CR>
+nnoremap <silent> <Leader>gd <cmd>lua require('telescope.builtin').lsp_definitions()<CR>
+nnoremap <silent> <Leader>gD <cmd>lua require('telescope.builtin').lsp_type_definitions()<CR>
+nnoremap <silent> <Leader>gr <cmd>lua require('telescope.builtin').lsp_references()<CR>
+nnoremap <silent> <Leader>gi <cmd>lua require('telescope.builtin').lsp_implementations()<CR>
+nnoremap <silent> <Leader>ca <cmd>lua require('telescope.builtin').lsp_code_actions()<CR>
+nnoremap <silent> <Leader>dd <cmd>lua require('telescope.builtin').lsp_document_diagnostics()<CR>
+nnoremap <silent> <Leader>dw <cmd>lua require('telescope.builtin').lsp_workspace_diagnostics()<CR>
 nnoremap <silent> <Leader>rn <cmd>lua vim.lsp.buf.rename()<CR>
 nnoremap <silent> <Leader>ho <cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <silent> <Leader>sh <cmd>lua vim.lsp.buf.signature_help()<CR>
