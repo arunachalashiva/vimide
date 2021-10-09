@@ -4,7 +4,10 @@ call plug#begin("~/.vim/plugged")
 Plug 'neovim/nvim-lspconfig'
 
 " auto completion for lsp
-Plug 'nvim-lua/completion-nvim'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/cmp-vsnip'
+Plug 'hrsh7th/vim-vsnip'
 
 " Fomatter
 Plug 'mhartington/formatter.nvim'
@@ -49,19 +52,41 @@ let g:NVIM_JDT_WS = g:NVIM_DATA . 'workspace/'
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
-" Set completeopt to have a better completion experience
-set completeopt=menuone,noinsert,noselect
-
 " Avoid showing message extra message when using completion
 set shortmess+=c
 
-" Registered language servers
-lua require'lspconfig'.pylsp.setup{on_attach=require'completion'.on_attach}
-lua require'lspconfig'.gopls.setup{on_attach=require'completion'.on_attach}
-lua require'lspconfig'.jdtls.setup{cmd={'jdt', vim.api.nvim_eval("g:NVIM_JDT_WS")..vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')},on_attach=require'completion'.on_attach}
-lua require'lspconfig'.clangd.setup{on_attach=require'completion'.on_attach}
-lua require'lspconfig'.bashls.setup{on_attach=require'completion'.on_attach}
-lua require'lspconfig'.yamlls.setup{on_attach=require'completion'.on_attach}
+set completeopt=menu,menuone,noselect
+
+lua << EOF
+local cmp = require'cmp'
+
+cmp.setup({
+  snippet = {
+    expand = function(args)
+      vim.fn["vsnip#anonymous"](args.body)
+    end,
+  },
+  mapping = {
+    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<C-e>'] = cmp.mapping.close(),
+    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+  },
+  sources = {
+    {name = 'nvim_lsp'}
+  }
+})
+local cap = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+
+-- Registered language servers
+require'lspconfig'.jdtls.setup{cmd={'jdt', vim.api.nvim_eval("g:NVIM_JDT_WS")..vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')},capabilities=cap}
+require'lspconfig'.pylsp.setup{capabilities=cap}
+require'lspconfig'.gopls.setup{capabilities=cap}
+require'lspconfig'.clangd.setup{capabilities=cap}
+require'lspconfig'.bashls.setup{capabilities=cap}
+require'lspconfig'.yamlls.setup{capabilities=cap}
+EOF
 
 " Auto format setting
 autocmd BufWritePre *.go lua vim.lsp.buf.formatting_sync(nil, 100)
