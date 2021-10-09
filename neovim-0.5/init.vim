@@ -58,7 +58,7 @@ set shortmess+=c
 " Registered language servers
 lua require'lspconfig'.pylsp.setup{on_attach=require'completion'.on_attach}
 lua require'lspconfig'.gopls.setup{on_attach=require'completion'.on_attach}
-lua require'lspconfig'.jdtls.setup{cmd={'jdt', vim.api.nvim.eval("g:NVIM_JDT_WS")..vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')},on_attach=require'completion'.on_attach}
+lua require'lspconfig'.jdtls.setup{cmd={'jdt', vim.api.nvim_eval("g:NVIM_JDT_WS")..vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')},on_attach=require'completion'.on_attach}
 lua require'lspconfig'.clangd.setup{on_attach=require'completion'.on_attach}
 lua require'lspconfig'.bashls.setup{on_attach=require'completion'.on_attach}
 lua require'lspconfig'.yamlls.setup{on_attach=require'completion'.on_attach}
@@ -84,7 +84,7 @@ require('formatter').setup({
     python = {
       function()
         return {
-          exe = 'yapf'
+          exe = 'yapf',
           stdin = true
         }
       end
