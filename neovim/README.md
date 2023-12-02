@@ -1,4 +1,4 @@
-# Settings for neovim-0.9.4
+# Settings for neovim-0.10.0
 
 ## neovim
 ### Install neovim
