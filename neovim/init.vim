@@ -42,6 +42,9 @@ Plug 'arunachalashiva/mvndisp'
 Plug 'nvim-tree/nvim-web-devicons'
 Plug 'nvim-tree/nvim-tree.lua'
 
+" Code commenting
+Plug 'numToStr/Comment.nvim'
+
 call plug#end()
 
 filetype plugin on
@@ -51,10 +54,9 @@ let g:loaded_netrw = 1
 let g:loaded_netrwPlugin = 1
 
 let g:NVIM_DATA = $HOME . '/data/'
-let g:NVIM_JDT_WS = g:NVIM_DATA . 'workspace/'
 
-let $JAVA_TOOL_OPTIONS = '-javaagent:' . g:NVIM_DATA . 'lombok-1.18.8.jar'
-let g:mvndisp_mvn_cmd = 'unset JAVA_TOOL_OPTIONS && mvn '
+let g:NVIM_LOMBOK = '-javaagent:' . g:NVIM_DATA . 'lombok-1.18.26.jar'
+let g:mvndisp_mvn_cmd = 'mvn '
 
 " Use <Tab> and <S-Tab> to navigate through popup menu
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
@@ -69,12 +71,11 @@ nnoremap <silent> <Leader>gd <cmd>lua require('telescope.builtin').lsp_definitio
 nnoremap <silent> <Leader>gD <cmd>lua require('telescope.builtin').lsp_type_definitions()<CR>
 nnoremap <silent> <Leader>gr <cmd>lua require('telescope.builtin').lsp_references()<CR>
 nnoremap <silent> <Leader>gi <cmd>lua require('telescope.builtin').lsp_implementations()<CR>
-nnoremap <silent> <Leader>dd <cmd>lua require('telescope.builtin').lsp_document_diagnostics()<CR>
-nnoremap <silent> <Leader>dw <cmd>lua require('telescope.builtin').lsp_workspace_diagnostics()<CR>
 nnoremap <silent> <Leader>ca <cmd>lua vim.lsp.buf.code_action()<CR>
 nnoremap <silent> <Leader>rn <cmd>lua vim.lsp.buf.rename()<CR>
 nnoremap <silent> <Leader>ho <cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <silent> <Leader>sh <cmd>lua vim.lsp.buf.signature_help()<CR>
+nnoremap <silent> <Leader>dd <cmd>lua require('telescope.builtin').diagnostics()<CR>
 nnoremap <silent> <Leader>dp <cmd>lua vim.diagnostic.goto_prev()<CR>
 nnoremap <silent> <Leader>dn <cmd>lua vim.diagnostic.goto_next()<CR>
 nnoremap <silent> <Leader>wa <cmd>lua vim.lsp.buf.add_workspace_folder()<CR>
@@ -99,6 +100,11 @@ let g:blamer_enabled = 1
 nnoremap <silent> <Leader>ff <cmd>lua require('telescope.builtin').find_files()<CR>
 nnoremap <silent> <Leader>fg <cmd>lua require('telescope.builtin').live_grep()<CR>
 nnoremap <silent> <Leader>fw <cmd>lua require('telescope.builtin').grep_string()<CR>
+nnoremap <silent> <Leader>fb <cmd>lua require('telescope.builtin').buffers()<CR>
+nnoremap <silent> <Leader>fh <cmd>lua require('telescope.builtin').help_tags()<CR>
+nnoremap <silent> <Leader>fs <cmd>lua require('telescope.builtin').search_history()<CR>
+nnoremap <silent> <Leader>fc <cmd>lua require('telescope.builtin').command_history()<CR>
+nnoremap <silent> <Leader>fd <cmd>lua require('telescope.builtin').diagnostics()<CR>
 
 " nnoremap <silent> <C-Right> :call BufferNext()<CR>
 nnoremap <silent> <C-Right> :bnext<CR>
@@ -178,8 +184,7 @@ local cap = require('cmp_nvim_lsp').default_capabilities()
 require('lsp-format').setup{}
 
 -- Registered language servers
---require'lspconfig'.jdtls.setup{cmd={'jdt', vim.api.nvim_eval("g:NVIM_JDT_WS")..vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')},capabilities=cap}
-require'lspconfig'.jdtls.setup{capabilities=cap}
+require'lspconfig'.jdtls.setup{cmd={"jdtls", "--jvm-arg="..vim.api.nvim_eval("g:NVIM_LOMBOK")}, capabilities=cap}
 require'lspconfig'.pylsp.setup{capabilities=cap}
 -- require'lspconfig'.gopls.setup{capabilities=cap, on_attach = require("lsp-format").on_attach}
 require'lspconfig'.gopls.setup{capabilities=cap}
@@ -238,4 +243,7 @@ require("nvim-tree").setup({
     group_empty = true,
   },
 })
+
+require("Comment").setup()
+
 EOF
