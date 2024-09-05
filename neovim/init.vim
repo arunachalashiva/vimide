@@ -33,17 +33,25 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 " Onedark color scheme
 Plug 'joshdick/onedark.vim'
 
-" Python formatter black
-Plug 'python/black'
-
 " My own plugin for maven commands
 Plug 'arunachalashiva/mvndisp'
 
 Plug 'nvim-tree/nvim-web-devicons'
 Plug 'nvim-tree/nvim-tree.lua'
 
-" Code commenting
+" Code commenting - use 'gcc' or 'gcb'
 Plug 'numToStr/Comment.nvim'
+
+" flutter tools
+Plug 'akinsho/flutter-tools.nvim'
+
+" Java
+Plug 'mfussenegger/nvim-jdtls'
+
+" Startup
+Plug 'nvimdev/dashboard-nvim'
+
+Plug 'hedyhli/outline.nvim'
 
 call plug#end()
 
@@ -69,7 +77,7 @@ set completeopt=menu,menuone,noselect
 " LSP config
 nnoremap <silent> <Leader>gd <cmd>lua require('telescope.builtin').lsp_definitions()<CR>
 nnoremap <silent> <Leader>gD <cmd>lua require('telescope.builtin').lsp_type_definitions()<CR>
-nnoremap <silent> <Leader>gr <cmd>lua require('telescope.builtin').lsp_references()<CR>
+nnoremap <silent> <Leader>gr <cmd>lua require('telescope.builtin').lsp_references({show_line = false})<CR>
 nnoremap <silent> <Leader>gi <cmd>lua require('telescope.builtin').lsp_implementations()<CR>
 nnoremap <silent> <Leader>ca <cmd>lua vim.lsp.buf.code_action()<CR>
 nnoremap <silent> <Leader>rn <cmd>lua vim.lsp.buf.rename()<CR>
@@ -113,7 +121,9 @@ nnoremap <silent> <C-Left>  :bprevious<CR>
 nnoremap <Leader>op :OpenProject
 nnoremap <Leader>ot :OpenTerminal<CR>
 nnoremap <Leader>bd :bdelete<CR>
+nnoremap <Leader>bp :b#<CR>
 nnoremap <Leader>om :Dispatch grip -b %<CR>
+nnoremap <Leader>os :Outline<CR>
 
 silent! colorscheme onedark
 
@@ -139,6 +149,11 @@ set ignorecase smartcase
 set expandtab smarttab
 " set rnu
 " set spell
+"
+set foldmethod=indent
+" set foldmethod=expr
+" set foldexpr=nvim_treesitter#foldexpr()
+set nofoldenable
 
 fun! OpenProject(dir)
   exe ':NvimTreeClose'
@@ -175,29 +190,76 @@ cmp.setup({
     ['<CR>'] = cmp.mapping.confirm({ select = true }),
   },
   sources = {
-    {name = 'nvim_lsp'}
+    {name = 'nvim_lsp'},
   }
 })
---local cap = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 local cap = require('cmp_nvim_lsp').default_capabilities()
 
 require('lsp-format').setup{}
 
 -- Registered language servers
-require'lspconfig'.jdtls.setup{cmd={"jdtls", "--jvm-arg="..vim.api.nvim_eval("g:NVIM_LOMBOK")}, capabilities=cap}
+-- require'lspconfig'.jdtls.setup{cmd={"jdtls", "--jvm-arg="..vim.api.nvim_eval("g:NVIM_LOMBOK")}, capabilities=cap}
 require'lspconfig'.pylsp.setup{capabilities=cap}
--- require'lspconfig'.gopls.setup{capabilities=cap, on_attach = require("lsp-format").on_attach}
+require("lspconfig").ruff_lsp.setup({
+    capabilities=cap,
+    init_options = {
+        settings = {  
+            enable = true,
+            ignoreStandardLibrary = true,
+            organizeImports       = true, 
+            fixAll                = true,
+            lint = {
+                enable = true,    
+                run    = 'onType',
+            },
+        },
+    },
+})
 require'lspconfig'.gopls.setup{capabilities=cap}
 require'lspconfig'.clangd.setup{capabilities=cap, on_attach = require("lsp-format").on_attach}
 --require'lspconfig'.bashls.setup{capabilities=cap, on_attach = require("lsp-format").on_attach}
 require'lspconfig'.bashls.setup{capabilities=cap}
 --require'lspconfig'.yamlls.setup{capabilities=cap}
 
+-- Setup jdtls for filte type java using autocmd
+vim.api.nvim_create_autocmd(
+  {
+    "BufNewFile",
+    "BufRead",
+  },
+  {
+    pattern = "*.java",
+    callback = function()
+      local config = {
+        cmd = {'jdtls', "--jvm-arg="..vim.api.nvim_eval("g:NVIM_LOMBOK")},
+        root_dir = vim.fs.dirname(vim.fs.find({'gradlew', '.git', 'mvnw'}, { upward = true })[1]),
+      }
+      require('jdtls').start_or_attach(config)
+    end
+  }
+)
+
 -- Telescope layout configuration
 require('telescope').setup({
   defaults = {
     layout_strategy = 'vertical',
     layout_config = { width = 0.95, height = 0.95},
+    -- path_display = {
+    --  "shorten",
+    --  function(opts, path)
+    --    local tail = require("telescope.utils").path_tail(path)
+    --    return string.format("%s (%s)", tail, path)
+    --  end
+    -- },
+    mappings = {
+      n = {
+        ['<c-d>'] = require('telescope.actions').delete_buffer
+      }, -- n
+      i = {
+        ["<C-h>"] = "which_key",
+        ['<c-d>'] = require('telescope.actions').delete_buffer
+      } -- i
+    } -- mappings
   },
 })
 
@@ -213,7 +275,15 @@ require('formatter').setup({
         }
       end
     },
-    python = {require("formatter.filetypes.python").black},
+    python = {
+      function()
+        return {
+          exe = 'ruff',
+          args = {'format', "-q", "-"},
+          stdin = true
+        }
+      end
+    },
     sh = {require("formatter.filetypes.sh").shfmt},
     go = {
       function()
@@ -227,10 +297,11 @@ require('formatter').setup({
   }
 })
 
+
 vim.api.nvim_exec([[
 augroup FormatAutogroup
   autocmd!
-  autocmd BufWritePost *.py,*.java,*.go,*.sh FormatWrite
+  autocmd BufWritePost *.java,*.py,*.go,*.sh FormatWrite
 augroup END
 ]], true)
 
@@ -246,4 +317,44 @@ require("nvim-tree").setup({
 
 require("Comment").setup()
 
+require("flutter-tools").setup {}
+
+require("dashboard").setup ({
+  theme = 'hyper',
+  disable_move = false,
+  shortcut_type = 'letter',
+  change_to_vcs_root  = true,
+  config = {
+    week_header = {
+      enable = true,
+    },
+  }, --  config used for theme
+})
+
+require("outline").setup({
+  outline_window = {
+    positiion = 'right',
+    width = 25,
+    relative_width = true,
+    show_cursorline = true,
+    hide_cursor = true,
+  },
+  outline_items = {
+    show_symbol_details = false,
+    highlight_hovered_item = true,
+    auto_set_cursor = true,
+  },
+  symbol_folding = {
+    autofold_depth = 1,
+    auto_unfold = {
+      hovered = true,
+    },
+  },
+  symbols = {
+    filter = {
+      default = {'String', 'Variable', exclude=true},
+      -- python = {'Function', 'Class'},
+    },
+  },
+})
 EOF
