@@ -3,6 +3,10 @@ return {
 	{
 		"numToStr/Comment.nvim",
 		opts = {
+			toggler = {
+				line = "<leader>cl",
+				block = "<leader>cb",
+			},
 			opleader = {
 				line = "<leader>cl",
 				block = "<leader>cb",
@@ -15,6 +19,7 @@ return {
 		config = function()
 			local configs = require("nvim-treesitter.configs")
 			configs.setup({
+				--ensure_installed = { "c", "lua", "java", "python", "go" },
 				highlight = { enabled = true },
 				indent = { enabled = true },
 			})

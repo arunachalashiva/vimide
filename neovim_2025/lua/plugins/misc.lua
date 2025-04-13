@@ -1,19 +1,17 @@
 return {
-	-- One dark theme
-	"joshdick/onedark.vim",
-
-	-- Nvim tree
 	{
-		"nvim-tree/nvim-tree.lua",
-		dependencies = {
-			"nvim-tree/nvim-web-devicons",
-		},
-		sort_by = "case_sensitive",
-		renderer = {
-			group_empty = true,
-		},
+		"navarasu/onedark.nvim",
+		config = function()
+			require("onedark").setup({
+				style = "darker",
+				transparent = true,
+				lualine = {
+					transparent = true,
+				},
+			})
+			require("onedark").load()
+		end,
 	},
-	-- Lualine
 	{
 		"nvim-lualine/lualine.nvim",
 		dependencies = {
@@ -23,10 +21,11 @@ return {
 			require("lualine").setup({
 				options = {
 					icons_enabled = true,
-					theme = "gruvbox_dark",
+					theme = "onedark",
+					always_show_tabline = true,
 				},
 				sections = {
-					lualine_a = {
+					lualine_c = {
 						{
 							"buffers",
 							show_modified_status = true,
@@ -247,7 +246,14 @@ return {
 				desc = "Lazygit",
 			},
 			{
-				"<leader>z",
+				"<leader>bd",
+				function()
+					Snacks.bufdelete()
+				end,
+				desc = "delete buffer",
+			},
+			{
+				"<leader>zm",
 				function()
 					Snacks.zen()
 				end,
