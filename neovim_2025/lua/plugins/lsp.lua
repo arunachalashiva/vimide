@@ -19,7 +19,7 @@ return {
 		config = function()
 			local configs = require("nvim-treesitter.configs")
 			configs.setup({
-				--ensure_installed = { "c", "lua", "java", "python", "go" },
+				-- ensure_installed = { "c", "lua", "java", "python", "go" },
 				highlight = { enabled = true },
 				indent = { enabled = true },
 			})
@@ -141,6 +141,38 @@ return {
 				flags = {
 					allow_incremental_sync = true,
 					debounce_text_changes = 80,
+				},
+			})
+		end,
+	},
+	{
+		"hedyhli/outline.nvim",
+		config = function()
+			vim.keymap.set("n", "<leader>os", "<cmd>Outline<CR>", { desc = "Toggle Outline" })
+			require("outline").setup({
+				outline_window = {
+					positiion = "right",
+					width = 25,
+					relative_width = true,
+					show_cursorline = true,
+					hide_cursor = true,
+				},
+				outline_items = {
+					show_symbol_details = false,
+					highlight_hovered_item = true,
+					auto_set_cursor = true,
+				},
+				symbol_folding = {
+					autofold_depth = 1,
+					auto_unfold = {
+						hovered = true,
+					},
+				},
+				symbols = {
+					filter = {
+						default = { "String", "Variable", exclude = true },
+						-- python = {'Function', 'Class'},
+					},
 				},
 			})
 		end,
