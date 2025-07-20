@@ -51,6 +51,10 @@ return {
 				},
 				sources = {
 					{ name = "nvim_lsp" },
+					{ name = "vsnip" },
+					per_file_type = {
+						codecompanion = { "codecompanion" },
+					},
 				},
 			})
 		end,
@@ -94,30 +98,31 @@ return {
 		config = function()
 			require("mason").setup()
 			require("mason-lspconfig").setup({
-				ensure_installed = { "clangd", "gopls", "pylsp", "lua_ls" },
+				ensure_installed = { "clangd", "gopls", "ruff", "lua_ls", "pylsp" },
 			})
 
 			local lspconfig = require("lspconfig")
 			local cap = require("cmp_nvim_lsp").default_capabilities()
-			lspconfig.gopls.setup({ capabilities = cap })
+			lspconfig.dartls.setup({ capabilities = cap })
+			--[[ lspconfig.gopls.setup({ capabilities = cap })
 			lspconfig.clangd.setup({ capabilities = cap })
-			lspconfig.pylsp.setup({ capabilities = cap })
-			--lspconfig.ruff.setup({
-			--	capabilities = cap,
-			--init_options = {
-			--	settings = {
-			--		enable = true,
-			--			ignoreStandardLibrary = true,
-			--			organizeImports = true,
-			--			fixAll = true,
-			--			lint = {
-			--				enable = true,
-			--				run = "onType",
-			--			},
-			--	},
-			--},
-			--})
-			lspconfig.lua_ls.setup({ capabilities = cap })
+			lspconfig.ruff.setup({
+				capabilities = cap,
+				init_options = {
+					settings = {
+						enable = true,
+						ignoreStandardLibrary = true,
+						organizeImports = true,
+						fixAll = true,
+						lint = {
+							enable = true,
+							run = "onType",
+						},
+					},
+				},
+			})
+			lspconfig.lua_ls.setup({ capabilities = cap }) ]]
+			-- lspconfig.pylsp.setup({ capabilities = cap })
 		end,
 	},
 	{
@@ -181,5 +186,29 @@ return {
 				},
 			})
 		end,
+	},
+	{
+		"olimorris/codecompanion.nvim",
+		opts = {},
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"nvim-treesitter/nvim-treesitter",
+		},
+		config = function()
+			require("codecompanion").setup({
+				stratergies = {
+					chat = {
+						adapter = "gemini",
+					},
+					inline = {
+						adapter = "gemini",
+					},
+				},
+				keymaps = {
+					{ "n", "<leader>cc", "<cmd>CodeCompanionToggle<cr>", desc = "Toggle CodeCompanion Chat" },
+				},
+			})
+		end,
+		vim.keymap.set("n", "<leader>cc", "<cmd>CodeCompanionChat gemini<cr>", { desc = "Toggle CodeCompanion Chat" }),
 	},
 }

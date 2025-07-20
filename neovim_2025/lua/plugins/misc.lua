@@ -5,6 +5,7 @@ return {
 			require("onedark").setup({
 				style = "dark",
 				transparent = true,
+				cmp_itemkind_reverse = true,
 				lualine = {
 					transparent = true,
 				},
@@ -23,14 +24,21 @@ return {
 					icons_enabled = true,
 					theme = "onedark",
 					always_show_tabline = true,
+					path = "absolute",
 				},
-				sections = {
-					lualine_c = {
+				tabline = {
+					lualine_b = {
 						{
 							"buffers",
 							show_modified_status = true,
+							show_filename_only = false,
 							mode = 0,
 						},
+					},
+				},
+				sections = {
+					lualine_c = {
+						{ "filename", path = 2 },
 					},
 				},
 			})
@@ -115,13 +123,25 @@ return {
 			explorer = { enabled = true },
 			indent = { enabled = true },
 			input = { enabled = true },
-			picker = { enabled = true },
 			notifier = { enabled = true },
 			quickfile = { enabled = true },
 			scope = { enabled = true },
 			scroll = { enabled = true },
 			statuscolumn = { enabled = true },
 			words = { enabled = true },
+			picker = {
+				enabled = true,
+				formatters = {
+					file = {
+						-- filename_first = true,
+						truncate = 100,
+					},
+				},
+				grep_word = {
+					live = true,
+					supports_live = true,
+				},
+			},
 		},
 		keys = {
 			{
@@ -245,49 +265,49 @@ return {
 				desc = "Buffer diagnostics",
 			},
 			{
-				"<leader>gb",
+				"<leader>Gb",
 				function()
 					Snacks.picker.git_branches()
 				end,
 				desc = "Git Branches",
 			},
 			{
-				"<leader>gl",
+				"<leader>Gl",
 				function()
 					Snacks.picker.git_log()
 				end,
 				desc = "Git Log",
 			},
 			{
-				"<leader>gL",
+				"<leader>GL",
 				function()
 					Snacks.picker.git_log_line()
 				end,
 				desc = "Git Log Line",
 			},
 			{
-				"<leader>gs",
+				"<leader>Gs",
 				function()
 					Snacks.picker.git_status()
 				end,
 				desc = "Git Status",
 			},
 			{
-				"<leader>gS",
+				"<leader>GS",
 				function()
 					Snacks.picker.git_stash()
 				end,
 				desc = "Git Stash",
 			},
 			{
-				"<leader>gg",
+				"<leader>Gd",
 				function()
 					Snacks.picker.git_diff()
 				end,
 				desc = "Git Diff (Hunks)",
 			},
 			{
-				"<leader>gf",
+				"<leader>Gf",
 				function()
 					Snacks.picker.git_log_file()
 				end,
@@ -314,13 +334,32 @@ return {
 				end,
 				desc = "Toggle Zen Mode",
 			},
+			{
+				"<leader>db",
+				function()
+					Snacks.dashboard()
+				end,
+				desc = "Open dashboard",
+			},
 		},
 	},
 	{
 		"MeanderingProgrammer/render-markdown.nvim",
 		dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" }, -- if you prefer nvim-web-devicons
+		ft = { "markdown", "codecompanion" },
 		---@module 'render-markdown'
 		---@type render.md.UserConfig
 		opts = {},
+	},
+	{
+		"nvim-flutter/flutter-tools.nvim",
+		lazy = false,
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+		},
+		-- config = true,
+		config = function()
+			require("flutter-tools").setup({})
+		end,
 	},
 }
