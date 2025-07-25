@@ -20,6 +20,7 @@ return {
 			local configs = require("nvim-treesitter.configs")
 			configs.setup({
 				-- ensure_installed = { "c", "lua", "java", "python", "go" },
+				ensure_installed = { "lua", "markdown", "markdown_inline", "yaml", "python", "go", "diff" },
 				highlight = { enabled = true },
 				indent = { enabled = true },
 			})
@@ -31,6 +32,8 @@ return {
 			"hrsh7th/cmp-nvim-lsp",
 			"hrsh7th/cmp-vsnip",
 			"hrsh7th/vim-vsnip",
+			-- "L3MON4D3/LuaSnip",
+			-- "saadparwaiz1/cmp_luasnip",
 		},
 		config = function()
 			local cmp = require("cmp")
@@ -38,6 +41,7 @@ return {
 				snippet = {
 					expand = function(args)
 						vim.fn["vsnip#anonymous"](args.body)
+						-- require("luasnip").lsp_expand(args.body)
 					end,
 				},
 				mapping = {
@@ -52,6 +56,7 @@ return {
 				sources = {
 					{ name = "nvim_lsp" },
 					{ name = "vsnip" },
+					-- { name = "luasnip" },
 					per_file_type = {
 						codecompanion = { "codecompanion" },
 					},
@@ -97,32 +102,87 @@ return {
 		},
 		config = function()
 			require("mason").setup()
-			require("mason-lspconfig").setup({
-				ensure_installed = { "clangd", "gopls", "ruff", "lua_ls", "pylsp" },
-			})
-
 			local lspconfig = require("lspconfig")
-			local cap = require("cmp_nvim_lsp").default_capabilities()
-			lspconfig.dartls.setup({ capabilities = cap })
-			--[[ lspconfig.gopls.setup({ capabilities = cap })
-			lspconfig.clangd.setup({ capabilities = cap })
-			lspconfig.ruff.setup({
-				capabilities = cap,
-				init_options = {
-					settings = {
-						enable = true,
-						ignoreStandardLibrary = true,
-						organizeImports = true,
-						fixAll = true,
-						lint = {
-							enable = true,
-							run = "onType",
+			local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+			lspconfig.dartls.setup({ capabilities = capabilities })
+			lspconfig.pylsp.setup({
+				settings = {
+					pylsp = {
+						plugins = {
+							pylint = {
+								enabled = false,
+							},
+							mypy = {
+								enabled = true,
+							},
+							pycodestyle = {
+								maxLineLength = 100,
+							},
+							ruff = {
+								enabled = true,
+								formatEnabled = false,
+								lintEnabled = true,
+								lineLength = 100,
+							},
+							isort = {
+								enabled = true,
+								profile = "black",
+							},
+							pylsp_rope = {
+								enabled = true,
+								rename = { enabled = true },
+								code_actions = { enabled = true },
+							},
+							jedi_completion = {
+								enabled = true,
+								include_params = true,
+							},
 						},
 					},
 				},
+				capabilities = capabilities,
 			})
-			lspconfig.lua_ls.setup({ capabilities = cap }) ]]
-			-- lspconfig.pylsp.setup({ capabilities = cap })
+			local mason_lspconfig = require("mason-lspconfig")
+			-- Define all LSP servers and their specific configurations
+			local servers = {
+				-- pylsp = {},
+				clangd = {},
+				gopls = {},
+				-- ruff = {
+				-- 	settings = { -- Use 'settings' key for LSP specific configuration
+				-- 		["ruff-lsp"] = { -- The actual server name might be different (e.g., 'ruff-lsp')
+				-- 			enable = true,
+				-- 			ignoreStandardLibrary = true,
+				-- 			organizeImports = true,
+				-- 			fixAll = true,
+				-- 			lint = {
+				-- 				enable = true,
+				-- 				run = "onType",
+				-- 			},
+				-- 		},
+				-- 	},
+				-- 	init_options = { -- Use 'init_options' for specific server initialization options
+				-- 		settings = { -- This structure depends on the LSP server's requirements
+				-- 			-- Your ruff specific init_options here if needed
+				-- 		},
+				-- 	},
+				-- },
+				lua_ls = {},
+			}
+
+			mason_lspconfig.setup({
+				ensure_installed = vim.tbl_keys(servers), -- Ensures all servers in 'servers' table are installed
+				on_server_ready = function(server_name)
+					local server_config = servers[server_name] or {} -- Get server specific config or empty table
+					require("lspconfig")[server_name].setup({
+						capabilities = capabilities,
+						-- Merge default settings with server-specific settings
+						settings = server_config.settings,
+						init_options = server_config.init_options,
+					})
+				end,
+			})
 		end,
 	},
 	{
@@ -189,26 +249,21 @@ return {
 	},
 	{
 		"olimorris/codecompanion.nvim",
-		opts = {},
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			"nvim-treesitter/nvim-treesitter",
 		},
-		config = function()
-			require("codecompanion").setup({
-				stratergies = {
-					chat = {
-						adapter = "gemini",
-					},
-					inline = {
-						adapter = "gemini",
-					},
-				},
-				keymaps = {
-					{ "n", "<leader>cc", "<cmd>CodeCompanionToggle<cr>", desc = "Toggle CodeCompanion Chat" },
-				},
-			})
-		end,
-		vim.keymap.set("n", "<leader>cc", "<cmd>CodeCompanionChat gemini<cr>", { desc = "Toggle CodeCompanion Chat" }),
+		opts = {
+			strategies = {
+				--NOTE: Change the adapter as required
+				chat = { adapter = "gemini" },
+				inline = { adapter = "gemini" },
+				cmd = { adapter = "gemini" },
+			},
+			opts = {
+				log_level = "DEBUG",
+			},
+		},
+		vim.keymap.set("n", "<leader>cc", "<cmd>CodeCompanionChat<cr>", { desc = "Toggle CodeCompanion Chat" }),
 	},
 }

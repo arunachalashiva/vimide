@@ -4,6 +4,7 @@ vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.cursorline = true
 vim.opt.cursorcolumn = true
+vim.opt.completeopt = "menu,menuone,noselect"
 --vim.opt.showtabline = 2
 vim.diagnostic.config({
 	virtual_text = { current_line = true },
