@@ -1,4 +1,20 @@
 return {
+	{
+		"nvim-treesitter/nvim-treesitter",
+		build = ":TSUpdate",
+		lazy = false,
+		branch = "master",
+		config = function()
+			local configs = require("nvim-treesitter.configs")
+			configs.setup({
+				ensure_installed = { "c", "java", "lua", "markdown", "markdown_inline", "yaml", "python", "go", "diff" },
+				auto_install = true,
+				highlight = { enable = true },
+				indent = { enable = true },
+				additional_vim_regex_highlighting = false,
+			})
+		end,
+	},
 	"nvim-lua/plenary.nvim",
 	{
 		"numToStr/Comment.nvim",
@@ -14,34 +30,22 @@ return {
 		},
 	},
 	{
-		"nvim-treesitter/nvim-treesitter",
-		build = ":TSUpdate",
-		config = function()
-			local configs = require("nvim-treesitter.configs")
-			configs.setup({
-				-- ensure_installed = { "c", "lua", "java", "python", "go" },
-				ensure_installed = { "lua", "markdown", "markdown_inline", "yaml", "python", "go", "diff" },
-				highlight = { enabled = true },
-				indent = { enabled = true },
-			})
-		end,
-	},
-	{
 		"hrsh7th/nvim-cmp",
 		dependencies = {
 			"hrsh7th/cmp-nvim-lsp",
-			"hrsh7th/cmp-vsnip",
-			"hrsh7th/vim-vsnip",
-			-- "L3MON4D3/LuaSnip",
-			-- "saadparwaiz1/cmp_luasnip",
+			-- "hrsh7th/cmp-vsnip",
+			-- "hrsh7th/vim-vsnip",
+			"L3MON4D3/LuaSnip",
+			"saadparwaiz1/cmp_luasnip",
 		},
 		config = function()
 			local cmp = require("cmp")
+			local luasnip = require("luasnip")
 			cmp.setup({
 				snippet = {
 					expand = function(args)
-						vim.fn["vsnip#anonymous"](args.body)
-						-- require("luasnip").lsp_expand(args.body)
+						-- vim.fn["vsnip#anonymous"](args.body)
+						require("luasnip").lsp_expand(args.body)
 					end,
 				},
 				mapping = {
@@ -55,8 +59,9 @@ return {
 				},
 				sources = {
 					{ name = "nvim_lsp" },
-					{ name = "vsnip" },
-					-- { name = "luasnip" },
+					-- { name = "vsnip" },
+					{ name = "luasnip" },
+					{ name = "buffer" },
 					per_file_type = {
 						codecompanion = { "codecompanion" },
 					},
@@ -106,82 +111,60 @@ return {
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 			lspconfig.dartls.setup({ capabilities = capabilities })
-			lspconfig.pylsp.setup({
-				settings = {
-					pylsp = {
-						plugins = {
-							pylint = {
-								enabled = false,
-							},
-							mypy = {
-								enabled = true,
-							},
-							pycodestyle = {
-								maxLineLength = 100,
-							},
-							ruff = {
-								enabled = true,
-								formatEnabled = false,
-								lintEnabled = true,
-								lineLength = 100,
-							},
-							isort = {
-								enabled = true,
-								profile = "black",
-							},
-							pylsp_rope = {
-								enabled = true,
-								rename = { enabled = true },
-								code_actions = { enabled = true },
-							},
-							jedi_completion = {
-								enabled = true,
-								include_params = true,
-							},
-						},
-					},
-				},
-				capabilities = capabilities,
-			})
 			local mason_lspconfig = require("mason-lspconfig")
 			-- Define all LSP servers and their specific configurations
 			local servers = {
-				-- pylsp = {},
+				pylsp = {
+					plugins = {
+						jedi_completion = {
+							enabled = true,
+							include_params = true,
+							include_class_objects = true,
+							include_function_objecs = true,
+							eager = true,
+							fuzzy = true,
+						},
+						pylint = {
+							enabled = false,
+						},
+						mypy = {
+							enabled = true,
+						},
+						pycodestyle = {
+							enabled = false,
+						},
+						ruff = {
+							enabled = true,
+							lineLength = 100,
+							extendSelect = { "E", "F", "I" },
+						},
+						isort = {
+							enabled = false,
+							profile = "black",
+						},
+						pylsp_rope = {
+							enabled = true,
+							rename = { enabled = true },
+							code_actions = { enabled = true },
+						},
+					},
+				},
 				clangd = {},
 				gopls = {},
-				-- ruff = {
-				-- 	settings = { -- Use 'settings' key for LSP specific configuration
-				-- 		["ruff-lsp"] = { -- The actual server name might be different (e.g., 'ruff-lsp')
-				-- 			enable = true,
-				-- 			ignoreStandardLibrary = true,
-				-- 			organizeImports = true,
-				-- 			fixAll = true,
-				-- 			lint = {
-				-- 				enable = true,
-				-- 				run = "onType",
-				-- 			},
-				-- 		},
-				-- 	},
-				-- 	init_options = { -- Use 'init_options' for specific server initialization options
-				-- 		settings = { -- This structure depends on the LSP server's requirements
-				-- 			-- Your ruff specific init_options here if needed
-				-- 		},
-				-- 	},
-				-- },
 				lua_ls = {},
 			}
 
+			for _name, _settings in pairs(servers) do
+				lspconfig[_name].setup({
+					capabilities = capabilities,
+					on_attach = on_attach,
+					settings = _settings,
+				})
+			end
+
 			mason_lspconfig.setup({
 				ensure_installed = vim.tbl_keys(servers), -- Ensures all servers in 'servers' table are installed
-				on_server_ready = function(server_name)
-					local server_config = servers[server_name] or {} -- Get server specific config or empty table
-					require("lspconfig")[server_name].setup({
-						capabilities = capabilities,
-						-- Merge default settings with server-specific settings
-						settings = server_config.settings,
-						init_options = server_config.init_options,
-					})
-				end,
+				automatic_enable = false,
 			})
 		end,
 	},
