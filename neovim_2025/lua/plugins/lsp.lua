@@ -7,7 +7,19 @@ return {
 		config = function()
 			local configs = require("nvim-treesitter.configs")
 			configs.setup({
-				ensure_installed = { "c", "java", "lua", "markdown", "markdown_inline", "yaml", "python", "go", "diff" },
+				ensure_installed = {
+					"c",
+					"cpp",
+					"cuda",
+					"java",
+					"lua",
+					"markdown",
+					"markdown_inline",
+					"yaml",
+					"python",
+					"go",
+					"diff",
+				},
 				auto_install = true,
 				highlight = { enable = true },
 				indent = { enable = true },
@@ -115,40 +127,56 @@ return {
 			-- Define all LSP servers and their specific configurations
 			local servers = {
 				pylsp = {
-					plugins = {
-						jedi_completion = {
-							enabled = true,
-							include_params = true,
-							include_class_objects = true,
-							include_function_objecs = true,
-							eager = true,
-							fuzzy = true,
-						},
-						pylint = {
-							enabled = false,
-						},
-						mypy = {
-							enabled = true,
-						},
-						pycodestyle = {
-							enabled = false,
-						},
-						ruff = {
-							enabled = true,
-							lineLength = 100,
-							extendSelect = { "E", "F", "I" },
-						},
-						isort = {
-							enabled = false,
-							profile = "black",
-						},
-						pylsp_rope = {
-							enabled = true,
-							rename = { enabled = true },
-							code_actions = { enabled = true },
+					pylsp = {
+						plugins = {
+							jedi_completion = {
+								enabled = true,
+								include_params = true,
+								include_class_objects = true,
+								include_function_objecs = true,
+								-- eager = true,
+								-- fuzzy = true,
+							},
+							pylint = {
+								enabled = true,
+							},
+							mypy = {
+								enabled = true,
+							},
+							pycodestyle = {
+								enabled = true,
+								maxLineLength = 100,
+							},
+							black = {
+								enabled = true,
+							},
+							autopep8 = {
+								enabled = false,
+							},
+							ruff = {
+								enabled = false,
+							},
+							isort = {
+								enabled = false,
+								profile = "black",
+							},
+							rope = {
+								enabled = true,
+								rename = { enabled = true },
+								code_actions = { enabled = true },
+							},
+							rope_completion = {
+								enabled = false,
+							},
 						},
 					},
 				},
+				--[[ ruff = {
+					settings = {
+						lint = { enable = true },
+						format = { preview = true },
+					},
+				}, ]]
 				clangd = {},
 				gopls = {},
 				lua_ls = {},
@@ -248,5 +276,17 @@ return {
 			},
 		},
 		vim.keymap.set("n", "<leader>cc", "<cmd>CodeCompanionChat<cr>", { desc = "Toggle CodeCompanion Chat" }),
+	},
+	{
+		"ray-x/lsp_signature.nvim",
+		event = "InsertEnter",
+		opts = {
+			bind = true,
+			floating_window = true,
+			hint_enable = true,
+			handler_opts = {
+				border = "rounded",
+			},
+		},
 	},
 }
