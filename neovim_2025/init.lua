@@ -36,4 +36,83 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 	end,
 })
 
+--[[ -- This is a BLOCKING operation.
+function show_command_output()
+	local command = "ls -la"
+	local command_output = vim.fn.system(command)
+	local buf = vim.api.nvim_create_buf(false, true)
+	vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(command_output, "\n"))
+
+	local width = math.floor(vim.o.columns * 0.8)
+	local height = math.floor(vim.o.lines * 0.8)
+	local row = math.floor((vim.o.lines - height) / 2)
+	local col = math.floor((vim.o.columns - width) / 2)
+
+	local opts = {
+		relative = "editor",
+		width = width,
+		height = height,
+		row = row,
+		col = col,
+		style = "minimal",
+		border = "single",
+	}
+	vim.api.nvim_open_win(buf, true, opts)
+end
+
+--- Runs 'ping -c 4 google.com' asynchronously.
+-- This is a NON-BLOCKING operation.
+function show_long_command_output()
+	local command = { "ping", "-c", "4", "google.com" }
+	local output_lines = {}
+	print("Starting long-running command...")
+
+	vim.fn.jobstart(command, {
+		on_stdout = function(_, data)
+			for _, line in ipairs(data) do
+				if line ~= "" then
+					table.insert(output_lines, line)
+				end
+			end
+		end,
+		on_exit = function(_, exit_code)
+			vim.schedule(function()
+				if exit_code ~= 0 then
+					print("Command failed with exit code: " .. exit_code)
+					return
+				end
+				print("Command finished successfully.")
+				local buf = vim.api.nvim_create_buf(false, true)
+				vim.api.nvim_buf_set_lines(buf, 0, -1, false, output_lines)
+				local width = math.floor(vim.o.columns * 0.8)
+				local height = math.floor(vim.o.lines * 0.8)
+				local row = math.floor((vim.o.lines - height) / 2)
+				local col = math.floor((vim.o.columns - width) / 2)
+				local opts = {
+					relative = "editor",
+					width = width,
+					height = height,
+					row = row,
+					col = col,
+					style = "minimal",
+					border = "single",
+				}
+				vim.api.nvim_open_win(buf, true, opts)
+			end)
+		end,
+	})
+end
+
+-- Now, create the user commands that call our functions.
+vim.api.nvim_create_user_command(
+	"ShowCommandOutput",
+	show_command_output,
+	{ nargs = 0, desc = "Run a fixed command (blocking)" }
+)
+
+vim.api.nvim_create_user_command(
+	"ShowLongCommandOutput",
+	show_long_command_output,
+	{ nargs = 0, desc = "Run a long command asynchronously" }
+) ]]
 require("config.lazy")

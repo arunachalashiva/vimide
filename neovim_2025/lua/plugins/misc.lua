@@ -14,6 +14,12 @@ return {
 		end,
 	},
 	{
+		"folke/tokyonight.nvim",
+		lazy = false,
+		priority = 1000,
+		opts = {},
+	},
+	{
 		"nvim-lualine/lualine.nvim",
 		dependencies = {
 			"nvim-tree/nvim-web-devicons",
@@ -206,6 +212,13 @@ return {
 					Snacks.picker.files()
 				end,
 				desc = "Find files",
+			},
+			{
+				"<leader>fr",
+				function()
+					Snacks.picker.recent()
+				end,
+				desc = "Find recent files",
 			},
 			{
 				"<leader>fg",

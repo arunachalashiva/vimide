@@ -57,7 +57,7 @@ return {
 				snippet = {
 					expand = function(args)
 						-- vim.fn["vsnip#anonymous"](args.body)
-						require("luasnip").lsp_expand(args.body)
+						luasnip.lsp_expand(args.body)
 					end,
 				},
 				mapping = {
@@ -138,10 +138,10 @@ return {
 								-- fuzzy = true,
 							},
 							pylint = {
-								enabled = true,
+								enabled = false,
 							},
 							mypy = {
-								enabled = true,
+								enabled = false,
 							},
 							pycodestyle = {
 								enabled = true,
@@ -161,9 +161,9 @@ return {
 								profile = "black",
 							},
 							rope = {
-								enabled = true,
-								rename = { enabled = true },
-								code_actions = { enabled = true },
+								enabled = false,
+								rename = { enabled = false },
+								code_actions = { enabled = false },
 							},
 							rope_completion = {
 								enabled = false,
@@ -179,7 +179,16 @@ return {
 				}, ]]
 				clangd = {},
 				gopls = {},
-				lua_ls = {},
+				lua_ls = {
+					Lua = {
+						workspace = {
+							library = {
+								"$VIMRUNTIME",
+							},
+							checkThirdParty = false,
+						},
+					},
+				},
 			}
 
 			for _name, _settings in pairs(servers) do
