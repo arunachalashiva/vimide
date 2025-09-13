@@ -118,7 +118,19 @@ return {
 			"neovim/nvim-lspconfig",
 		},
 		config = function()
-			require("mason").setup()
+			require("mason").setup({
+				ensured_installed = {
+					"bandit",
+					"black",
+					"clangd",
+					"google-java-format",
+					"gopls",
+					"lua-language-server",
+					"python-lsp-server",
+					"stylua",
+					"yamlfmt",
+				},
+			})
 			local lspconfig = require("lspconfig")
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
