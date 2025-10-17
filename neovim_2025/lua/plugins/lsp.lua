@@ -131,11 +131,11 @@ return {
 					"yamlfmt",
 				},
 			})
-			local lspconfig = require("lspconfig")
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-			lspconfig.dartls.setup({ capabilities = capabilities })
+			vim.lsp.config("dartls", { capabilities = capabilities })
 			local mason_lspconfig = require("mason-lspconfig")
+
 			-- Define all LSP servers and their specific configurations
 			local servers = {
 				pylsp = {
@@ -204,7 +204,7 @@ return {
 			}
 
 			for _name, _settings in pairs(servers) do
-				lspconfig[_name].setup({
+				vim.lsp.config(_name, {
 					capabilities = capabilities,
 					on_attach = on_attach,
 					settings = _settings,
@@ -213,7 +213,7 @@ return {
 
 			mason_lspconfig.setup({
 				ensure_installed = vim.tbl_keys(servers), -- Ensures all servers in 'servers' table are installed
-				automatic_enable = false,
+				automatic_enable = true,
 			})
 		end,
 	},
@@ -248,36 +248,22 @@ return {
 		end,
 	},
 	{
-		"hedyhli/outline.nvim",
+		"stevearc/aerial.nvim",
 		config = function()
-			vim.keymap.set("n", "<leader>os", "<cmd>Outline<CR>", { desc = "Toggle Outline" })
-			require("outline").setup({
-				outline_window = {
-					positiion = "right",
-					width = 25,
-					relative_width = true,
-					show_cursorline = true,
-					hide_cursor = true,
-				},
-				outline_items = {
-					show_symbol_details = false,
-					highlight_hovered_item = true,
-					auto_set_cursor = true,
-				},
-				symbol_folding = {
-					autofold_depth = 1,
-					auto_unfold = {
-						hovered = true,
-					},
-				},
-				symbols = {
-					filter = {
-						default = { "String", "Variable", exclude = true },
-						-- python = {'Function', 'Class'},
-					},
-				},
+			require("aerial").setup({
+				on_attach = function(bufnr)
+					vim.keymap.set("n", "{", "<cmd>AerialPrev<CR>", { buffer = bufnr })
+					vim.keymap.set("n", "}", "<cmd>AerialNext<CR>", { buffer = bufnr })
+				end,
 			})
+			vim.keymap.set("n", "<leader>os", "<cmd>AerialToggle!<CR>")
 		end,
+		opts = {},
+		-- Optional dependencies
+		dependencies = {
+			"nvim-treesitter/nvim-treesitter",
+			"nvim-tree/nvim-web-devicons",
+		},
 	},
 	{
 		"olimorris/codecompanion.nvim",

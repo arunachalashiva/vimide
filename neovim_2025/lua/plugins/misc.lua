@@ -375,4 +375,12 @@ return {
 			require("flutter-tools").setup({})
 		end,
 	},
+	{
+		"arunachalashiva/mvndisp",
+		config = function(plugin)
+			vim.opt.rtp:append(plugin.dir .. "/mvn_wrapper.nvim")
+			local mvn_wrapper = require("mvn_wrapper")
+			mvn_wrapper.setup()
+		end,
+	},
 }
