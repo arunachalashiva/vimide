@@ -5,6 +5,7 @@ vim.opt.smartcase = true
 vim.opt.cursorline = true
 vim.opt.cursorcolumn = true
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
+vim.opt.termguicolors = true
 --vim.opt.showtabline = 2
 vim.diagnostic.config({
 	virtual_text = { current_line = true },
@@ -36,7 +37,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 	end,
 })
 
---[[ -- This is a BLOCKING operation.
+-- This is a BLOCKING operation.
 function show_command_output()
 	local command = "ls -la"
 	local command_output = vim.fn.system(command)
@@ -114,5 +115,7 @@ vim.api.nvim_create_user_command(
 	"ShowLongCommandOutput",
 	show_long_command_output,
 	{ nargs = 0, desc = "Run a long command asynchronously" }
-) ]]
+)
 require("config.lazy")
+
+-- vim.cmd("colorscheme tokyonight-night")

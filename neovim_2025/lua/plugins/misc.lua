@@ -3,14 +3,15 @@ return {
 		"navarasu/onedark.nvim",
 		config = function()
 			require("onedark").setup({
-				style = "dark",
+				style = "darker",
 				transparent = true,
 				cmp_itemkind_reverse = true,
+				term_colors = true,
 				lualine = {
 					transparent = true,
 				},
 			})
-			require("onedark").load()
+			--require("onedark").load()
 		end,
 	},
 	{
@@ -18,6 +19,21 @@ return {
 		lazy = false,
 		priority = 1000,
 		opts = {},
+		config = function()
+			require("tokyonight").setup({})
+			-- require("tokyonight").load()
+			vim.cmd([[colorscheme tokyonight-night]])
+		end,
+	},
+	{
+		"catppuccin/nvim",
+		name = "catppuccin",
+		lazy = false,
+		config = function()
+			require("catppuccin").setup({
+				flavour = "auto",
+			})
+		end,
 	},
 	{
 		"nvim-lualine/lualine.nvim",
@@ -28,7 +44,8 @@ return {
 			require("lualine").setup({
 				options = {
 					icons_enabled = true,
-					theme = "onedark",
+					-- theme = "catppuccin",
+					theme = "tokyonight-night",
 					always_show_tabline = true,
 					path = "absolute",
 				},
@@ -144,7 +161,7 @@ return {
 					},
 				},
 				grep_word = {
-					live = true,
+					live = false,
 					supports_live = true,
 				},
 			},
@@ -323,6 +340,13 @@ return {
 				"<leader>Gf",
 				function()
 					Snacks.picker.git_log_file()
+				end,
+				desc = "Git Log File",
+			},
+			{
+				"<leader>GF",
+				function()
+					Snacks.picker.git_files()
 				end,
 				desc = "Git Log File",
 			},

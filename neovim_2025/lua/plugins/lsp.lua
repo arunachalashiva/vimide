@@ -273,7 +273,6 @@ return {
 		},
 		opts = {
 			strategies = {
-				--NOTE: Change the adapter as required
 				chat = { adapter = "gemini" },
 				inline = { adapter = "gemini" },
 				cmd = { adapter = "gemini" },
