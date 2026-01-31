@@ -28,12 +28,65 @@ end)
 vim.keymap.set("n", "<leader>GD", "<Cmd>Gitsigns diffthis<CR>", { silent = true })
 vim.keymap.set("n", "<leader>GB", "<Cmd>Gitsigns blame<CR>", { silent = true })
 
+vim.keymap.set("v", "<C-Insert>", '"+y', { desc = "Copy to clipboard" })
+vim.keymap.set("n", "<S-Insert>", '"+p', { desc = "Copy from clipboard" })
+
 vim.api.nvim_create_autocmd("BufReadPost", {
 	pattern = { "*" },
 	callback = function()
 		if vim.fn.line("'\"") > 1 and vim.fn.line("'\"") <= vim.fn.line("$") then
 			vim.api.nvim_exec("normal! g'\"", false)
 		end
+	end,
+})
+
+-- Create a reusable augroup to prevent duplication
+local indent_group = vim.api.nvim_create_augroup("FileTypeIndent", { clear = true })
+local tabspace_group = vim.api.nvim_create_augroup("FileTabSpace", { clear = true })
+
+-- Configure 2 spaces for Lua, Java, HTML, etc.
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "lua", "java", "sh", "json" },
+	group = indent_group,
+	callback = function()
+		vim.opt_local.shiftwidth = 2 -- Size of an indent
+		vim.opt_local.tabstop = 2 -- Number of spaces tabs count for
+	end,
+})
+
+-- Configure 4 spaces for Python, Rust, C++, go.
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "python", "rust", "cpp", "go" },
+	group = indent_group,
+	callback = function()
+		vim.opt_local.shiftwidth = 4
+		vim.opt_local.tabstop = 4
+	end,
+})
+
+-- Configure 8 spaces for C.
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "c" },
+	group = indent_group,
+	callback = function()
+		vim.opt_local.shiftwidth = 8
+		vim.opt_local.tabstop = 8
+	end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "lua", "rust", "java", "sh", "json", "cpp", "python" },
+	group = tabspace_group,
+	callback = function()
+		vim.opt_local.expandtab = true -- Use spaces instead of tabs
+	end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "go", "c" },
+	group = tabspace_group,
+	callback = function()
+		vim.opt_local.expandtab = false
 	end,
 })
 
