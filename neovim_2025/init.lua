@@ -28,8 +28,8 @@ end)
 vim.keymap.set("n", "<leader>GD", "<Cmd>Gitsigns diffthis<CR>", { silent = true })
 vim.keymap.set("n", "<leader>GB", "<Cmd>Gitsigns blame<CR>", { silent = true })
 
-vim.keymap.set("v", "<C-Insert>", '"+y', { desc = "Copy to clipboard" })
-vim.keymap.set("n", "<S-Insert>", '"+p', { desc = "Copy from clipboard" })
+vim.keymap.set("v", "<leader>y", '"+y', { desc = "Copy to clipboard" })
+vim.keymap.set("n", "<leader>p", '"+p', { desc = "Paste from clipboard" })
 
 vim.api.nvim_create_autocmd("BufReadPost", {
 	pattern = { "*" },

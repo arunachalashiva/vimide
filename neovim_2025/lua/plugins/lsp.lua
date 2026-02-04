@@ -92,6 +92,8 @@ return {
 				python = { "black" },
 				java = { "google-java-format" },
 				lua = { "stylua" },
+				c = { "clang-format" },
+				cpp = { "clang-format" },
 				--yaml = { "yamlfmt" },
 			},
 			-- Set default options
@@ -124,13 +126,16 @@ return {
 					"bandit",
 					"black",
 					"clangd",
+					"clang-format",
 					"google-java-format",
 					"gopls",
 					"lua-language-server",
+					"bash-language-server",
 					"python-lsp-server",
 					"stylua",
 					"yamlfmt",
 					"json-lsp",
+					"shfmt",
 				},
 			})
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
@@ -268,55 +273,6 @@ return {
 			"nvim-treesitter/nvim-treesitter",
 			"nvim-tree/nvim-web-devicons",
 		},
-	},
-	{
-		"olimorris/codecompanion.nvim",
-		-- tag = "v17.33.0",
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-			"nvim-treesitter/nvim-treesitter",
-		},
-		opts = {
-			display = {
-				chat = {
-					window = {
-						layout = "buffer",
-						buflisted = true,
-						sticky = true,
-					},
-				},
-			},
-			interactions = {
-				chat = { adapter = "gemini" },
-				inline = { adapter = "gemini" },
-				cmd = { adapter = "gemini" },
-			},
-			opts = {
-				log_level = "DEBUG",
-			},
-			adapters = {
-				acp = {
-					gemini_cli = function()
-						return require("codecompanion.adapters").extend("gemini_cli", {
-							defaults = {
-								auth_method = "gemini-api-key",
-								timeout = 20000,
-							},
-							env = {
-								api_key = "GEMINI_API_KEY",
-							},
-						})
-					end,
-				},
-			},
-		},
-		vim.keymap.set("n", "<leader>cc", "<cmd>CodeCompanionChat<cr>", { desc = "Toggle CodeCompanion Chat" }),
-		vim.keymap.set(
-			"n",
-			"<leader>ca",
-			"<cmd>CodeCompanionChat adapter=gemini_cli<cr>",
-			{ desc = "Toggle CodeCompanion Agent Chat" }
-		),
 	},
 	{
 		"ray-x/lsp_signature.nvim",
