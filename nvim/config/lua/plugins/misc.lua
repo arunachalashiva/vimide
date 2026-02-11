@@ -227,7 +227,15 @@ return {
 			{
 				"<leader>ot",
 				function()
-					Snacks.terminal("zsh")
+					Snacks.terminal("zsh", {
+						win = {
+							--position = "bottom",
+							position = "float",
+							height = 0.8,
+							width = 0.8,
+							border = "rounded",
+						},
+					})
 				end,
 				desc = "Toggle terminal",
 			},
