@@ -1,85 +1,76 @@
-FROM ubuntu:focal
+FROM ubuntu:latest AS builder
 
-MAINTAINER ArunachalaShiva
+ENV LAZYGIT_VERSION="0.59.0"
+ENV GO_VERSION="1.24.0"
+ENV NVIM_VERSION="v0.11.6"
 
-ENV UID=${UID:-1000}
-ENV GID=${GID:-1000}
-ENV USER=${USER:-user}
+RUN apt update && \
+	apt-get install -y curl wget
 
-RUN groupadd -g ${GID} ${USER} \
-	&& useradd -u ${UID} -g ${GID} -m ${USER}
+# install go lang
+RUN wget https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz && \
+	rm -rf /usr/local/go && \
+	tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz
 
-WORKDIR /user/work
+# install lazygit
+RUN curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz" && \
+	tar xf lazygit.tar.gz lazygit && \
+	install lazygit -D -t /usr/local/bin/
 
-RUN mkdir /usr/local/share/vim
+# install nvim
+RUN wget "https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}/nvim-linux-x86_64.tar.gz" && tar -C /usr/local -xzf nvim-linux-x86_64.tar.gz && rm -f nvim-linux-x86_64.tar.gz
 
-# Install tools
-RUN apt-get update \
- && apt-get install -y vim curl unzip git wget
+FROM ubuntu:latest
 
-# Install python
-RUN apt-get install -y python3 python3-setuptools python3-pip python3-dev virtualenv \
- && ln -s /usr/bin/python3.8 /usr/bin/python \
- && ln -s /usr/bin/pip3 /usr/bin/pip
-RUN pip install jedi flake8 autopep8 yapf
+COPY --from=builder /usr/local/go /usr/local/go
+COPY --from=builder /usr/local/bin/lazygit /usr/local/bin/lazygit
+COPY --from=builder /usr/local/nvim-linux-x86_64 /usr/local/nvim-linux-x86_64
 
-RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
+RUN apt update && apt-get install -y \
+	build-essential \
+	python3 \
+	python3-dev \
+	python3-pip \
+	python3-venv \
+	curl \
+	openjdk-21-jdk \
+	git \
+	fzf \
+	curl \
+	wget \
+	zsh \
+	zsh-autosuggestions \
+	zsh-syntax-highlighting \
+	ripgrep \
+	lua5.3 \
+	lua5.3-dev \
+	luarocks \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install C and C++
-RUN apt-get install -y gcc g++ build-essential clang clang-tidy clang-format cmake
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt update && apt-get install -y \
+	nodejs \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install java and mvn
-RUN apt-get install -y openjdk-11-jdk
-RUN apt-get install -y maven
-ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-ENV PATH=${PATH}:/usr/local/bin:${JAVA_HOME}/bin
-RUN wget https://github.com/google/google-java-format/releases/download/google-java-format-1.6/google-java-format-1.6-all-deps.jar -P /usr/local/share/vim/
-RUN wget https://repo1.maven.org/maven2/org/projectlombok/lombok/1.18.8/lombok-1.18.8-sources.jar -P /usr/local/share/vim
-RUN wget https://repo1.maven.org/maven2/org/projectlombok/lombok/1.18.8/lombok-1.18.8.jar -P /usr/local/share/vim
+ENV ZSH=/usr/local/zsh
+ENV TERM=xterm
 
-# Install go
-RUN curl -sL --retry 5 "https://golang.org/dl/go1.16.3.linux-amd64.tar.gz" \
-    | gunzip | tar -x -C /usr/local/
-ENV GOPATH=/user/work/go
-ENV PATH=${PATH}:/usr/local/go/bin:${GOPATH}/bin
-RUN go get golang.org/x/tools/cmd/goimports
+# Default powerline10k theme, no plugins installed
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+RUN git clone https://github.com/zsh-users/zsh-autosuggestions /usr/local/zsh/custom/plugins/zsh-autosuggestions
 
-COPY google-java-format /usr/local/bin/
+RUN adduser nvimuser
+RUN chsh -s $(which zsh) nvimuser
 
-RUN apt-get install -y locales \
- && locale-gen en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
+RUN chmod -R go-w /usr/local/zsh
+RUN chown -R nvimuser:nvimuser /usr/local/zsh
 
-# Install RipGrep
-RUN wget -O rg.deb https://github.com/BurntSushi/ripgrep/releases/download/11.0.2/ripgrep_11.0.2_amd64.deb \
- && dpkg -i rg.deb \
- && rm rg.deb
+RUN npm install -g @google/gemini-cli
 
-USER ${USER}
-ENV HOME /home/${USER}
+USER nvimuser
 
-COPY vimrc ${HOME}/.vimrc
-
-# Download vundle plug and install all vim plugins using vimplug
-RUN curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-
-RUN vim +silent +PlugInstall +qall
-RUN cd ${HOME}/.vim/plugged/YouCompleteMe \
- && python3 ./install.py --java-completer --clangd-completer --go-completer \
- && cd -
-COPY ftplugin ${HOME}/.vim/ftplugin/
-COPY ycm_extra_conf.py ${HOME}/.vim/.ycm_extra_conf.py
-
-# Install FZF
-RUN git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf \
- && ~/.fzf/install
-ENV PATH=${PATH}:${HOME}/.fzf/bin
-
-# Install misc
-RUN pip3 install grip compiledb ranger-fm
-ENV PATH=${PATH}:${HOME}/.local/bin
-
-CMD ["/usr/bin/vim"]
+ENV PATH=$PATH:/usr/local/go/bin:/usr/local/nvim-linux-x86_64/bin
+# COPY nvim/config /root/.config/nvim
