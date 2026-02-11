@@ -18,9 +18,15 @@ RUN curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/d
 	install lazygit -D -t /usr/local/bin/
 
 # install nvim
-RUN wget "https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}/nvim-linux-x86_64.tar.gz" && tar -C /usr/local -xzf nvim-linux-x86_64.tar.gz && rm -f nvim-linux-x86_64.tar.gz
+RUN wget "https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}/nvim-linux-x86_64.tar.gz" && \
+	tar -C /usr/local -xzf nvim-linux-x86_64.tar.gz && \
+	rm -f nvim-linux-x86_64.tar.gz
 
 FROM ubuntu:latest
+
+ARG USERNAME=nvimuser
+ARG USER_UID=1000
+ARG USER_GID=1000
 
 COPY --from=builder /usr/local/go /usr/local/go
 COPY --from=builder /usr/local/bin/lazygit /usr/local/bin/lazygit
@@ -62,15 +68,17 @@ ENV TERM=xterm
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 RUN git clone https://github.com/zsh-users/zsh-autosuggestions /usr/local/zsh/custom/plugins/zsh-autosuggestions
 
-RUN adduser nvimuser
-RUN chsh -s $(which zsh) nvimuser
+RUN userdel -r ubuntu || true \
+    && groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m -s /usr/bin/zsh ${USERNAME}
 
 RUN chmod -R go-w /usr/local/zsh
-RUN chown -R nvimuser:nvimuser /usr/local/zsh
+RUN chown -R ${USERNAME}:${USERNAME} /usr/local/zsh
 
 RUN npm install -g @google/gemini-cli
 
-USER nvimuser
+USER ${USERNAME}
+WORKDIR /home/${USERNAME}
 
 ENV PATH=$PATH:/usr/local/go/bin:/usr/local/nvim-linux-x86_64/bin
 # COPY nvim/config /root/.config/nvim
