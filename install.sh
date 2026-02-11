@@ -4,16 +4,16 @@
 if [[ ! -d ${HOME}/.vimide ]]; then
   # create ~/.vimide for persisting config. Also home directory of docker
   mkdir -p ${HOME}/.vimide/.config/nvim
-
-  # copy neovim config to home directory
-  cp -R nvim/config/* ${HOME}/.vimide/.config/nvim/
-
-  # copy .zshrc to home directory
-  cp zshrc ${HOME}/.vimide/.zshrc
-
-  # copy .gitconfig to home directory
-  cp ${HOME}/.gitconfig ${HOME}/.vimide/
 fi
+
+# copy neovim config to home directory
+cp -R nvim/config/* ${HOME}/.vimide/.config/nvim/
+
+# copy .zshrc to home directory
+cp zshrc ${HOME}/.vimide/.zshrc
+
+# copy .gitconfig to home directory
+cp ${HOME}/.gitconfig ${HOME}/.vimide/
 
 # Build docker
 docker build \
