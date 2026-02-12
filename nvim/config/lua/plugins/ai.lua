@@ -162,4 +162,10 @@ return {
 			{ desc = "Toggle CodeCompanion Agent Chat" }
 		),
 	},
+	{
+		"supermaven-inc/supermaven-nvim",
+		config = function()
+			require("supermaven-nvim").setup({})
+		end,
+	},
 }

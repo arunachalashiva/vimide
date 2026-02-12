@@ -187,6 +187,11 @@ return {
 							rope_completion = {
 								enabled = false,
 							},
+							rope_autoimport = {
+								enabled = true,
+								completions = { enabled = true }, -- Show unimported symbols in completion list
+								code_actions = { enabled = true }, -- Allow "Add Import" via code actions
+							},
 						},
 					},
 				},

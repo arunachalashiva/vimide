@@ -233,7 +233,7 @@ return {
 							position = "float",
 							height = 0.8,
 							width = 0.8,
-							border = "rounded",
+							-- border = "rounded",
 						},
 					})
 				end,

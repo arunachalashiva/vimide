@@ -77,6 +77,8 @@ RUN chown -R ${USERNAME}:${USERNAME} /usr/local/zsh
 
 RUN npm install -g @google/gemini-cli
 
+RUN pip3 install rope --no-cache-dir --break-system-packages
+
 USER ${USERNAME}
 WORKDIR /home/${USERNAME}
 

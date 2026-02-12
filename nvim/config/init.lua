@@ -16,7 +16,7 @@ vim.diagnostic.config({
 vim.keymap.set("n", "<C-Right>", "<Cmd>bnext<CR>", { silent = true })
 vim.keymap.set("n", "<C-Left>", "<Cmd>bprevious<CR>", { silent = true })
 
-vim.keymap.set("n", "<leader>ca", function()
+vim.keymap.set("n", "<leader>cf", function()
 	vim.lsp.buf.code_action()
 end)
 vim.keymap.set("n", "<leader>rn", function()
@@ -31,7 +31,8 @@ vim.keymap.set("n", "<leader>GB", "<Cmd>Gitsigns blame<CR>", { silent = true })
 vim.keymap.set("v", "<leader>y", '"+y', { desc = "Copy to clipboard" })
 vim.keymap.set("n", "<leader>p", '"+p', { desc = "Paste from clipboard" })
 
-vim.keymap.set("t", "<leader>ot", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+--vim.keymap.set("t", "<leader>ot", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+vim.keymap.set("t", "q", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
 vim.api.nvim_create_autocmd("BufReadPost", {
 	pattern = { "*" },
@@ -93,8 +94,8 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 -- This is a BLOCKING operation.
-function show_command_output()
-	local command = "ls -la"
+function show_command_output(opts)
+	local command = opts.args ~= "" and opts.args
 	local command_output = vim.fn.system(command)
 	local buf = vim.api.nvim_create_buf(false, true)
 	vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(command_output, "\n"))
@@ -104,7 +105,7 @@ function show_command_output()
 	local row = math.floor((vim.o.lines - height) / 2)
 	local col = math.floor((vim.o.columns - width) / 2)
 
-	local opts = {
+	local win_opts = {
 		relative = "editor",
 		width = width,
 		height = height,
@@ -113,18 +114,25 @@ function show_command_output()
 		style = "minimal",
 		border = "single",
 	}
-	vim.api.nvim_open_win(buf, true, opts)
+	vim.api.nvim_open_win(buf, true, win_opts)
 end
 
---- Runs 'ping -c 4 google.com' asynchronously.
+--- Runs the provided command asynchronously.
 -- This is a NON-BLOCKING operation.
-function show_long_command_output()
-	local command = { "ping", "-c", "4", "google.com" }
+function show_long_command_output(opts)
+	local command = #opts.fargs > 0 and opts.fargs
 	local output_lines = {}
-	print("Starting long-running command...")
+	print("Starting command...")
 
 	vim.fn.jobstart(command, {
 		on_stdout = function(_, data)
+			for _, line in ipairs(data) do
+				if line ~= "" then
+					table.insert(output_lines, line)
+				end
+			end
+		end,
+		on_stderr = function(_, data)
 			for _, line in ipairs(data) do
 				if line ~= "" then
 					table.insert(output_lines, line)
@@ -135,16 +143,16 @@ function show_long_command_output()
 			vim.schedule(function()
 				if exit_code ~= 0 then
 					print("Command failed with exit code: " .. exit_code)
-					return
+				else
+					print("Command finished successfully.")
 				end
-				print("Command finished successfully.")
 				local buf = vim.api.nvim_create_buf(false, true)
 				vim.api.nvim_buf_set_lines(buf, 0, -1, false, output_lines)
 				local width = math.floor(vim.o.columns * 0.8)
 				local height = math.floor(vim.o.lines * 0.8)
 				local row = math.floor((vim.o.lines - height) / 2)
 				local col = math.floor((vim.o.columns - width) / 2)
-				local opts = {
+				local win_opts = {
 					relative = "editor",
 					width = width,
 					height = height,
@@ -153,7 +161,7 @@ function show_long_command_output()
 					style = "minimal",
 					border = "single",
 				}
-				vim.api.nvim_open_win(buf, true, opts)
+				vim.api.nvim_open_win(buf, true, win_opts)
 			end)
 		end,
 	})
@@ -163,14 +171,18 @@ end
 vim.api.nvim_create_user_command(
 	"ShowCommandOutput",
 	show_command_output,
-	{ nargs = 0, desc = "Run a fixed command (blocking)" }
+	{ nargs = "*", desc = "Run a generic command (blocking)" }
 )
 
 vim.api.nvim_create_user_command(
 	"ShowLongCommandOutput",
 	show_long_command_output,
-	{ nargs = 0, desc = "Run a long command asynchronously" }
+	{ nargs = "*", desc = "Run a generic command asynchronously" }
 )
+
+vim.keymap.set("n", "<leader>rcb", ":ShowCommandOutput ", { desc = "Run command (blocking)" })
+vim.keymap.set("n", "<leader>rca", ":ShowLongCommandOutput ", { desc = "Run command (async)" })
+
 require("config.lazy")
 
 -- vim.cmd("colorscheme tokyonight-night")
