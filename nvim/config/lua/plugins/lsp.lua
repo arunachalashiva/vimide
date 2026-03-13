@@ -94,7 +94,11 @@ return {
 				lua = { "stylua" },
 				c = { "clang-format" },
 				cpp = { "clang-format" },
-				--yaml = { "yamlfmt" },
+				vue = { "prettier" },
+				javascript = { "prettier" },
+				typescript = { "prettier" },
+				javascriptreact = { "prettier" },
+				typescriptreact = { "prettier" },
 			},
 			-- Set default options
 			default_format_opts = {
@@ -136,6 +140,11 @@ return {
 					"yamlfmt",
 					"json-lsp",
 					"shfmt",
+					"vue-language-server",
+					"prettier",
+					"ts_ls",
+					"eslint",
+					"tailwindcss",
 				},
 			})
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()

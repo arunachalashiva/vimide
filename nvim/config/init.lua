@@ -32,7 +32,7 @@ vim.keymap.set("v", "<leader>y", '"+y', { desc = "Copy to clipboard" })
 vim.keymap.set("n", "<leader>p", '"+p', { desc = "Paste from clipboard" })
 
 --vim.keymap.set("t", "<leader>ot", "<C-\\><C-n>", { desc = "Exit terminal mode" })
-vim.keymap.set("t", "q", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+vim.keymap.set("t", "<leader>q", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
 vim.api.nvim_create_autocmd("BufReadPost", {
 	pattern = { "*" },
